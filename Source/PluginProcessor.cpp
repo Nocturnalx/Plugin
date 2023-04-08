@@ -160,9 +160,15 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
                 if(notesPressed == 0){
                     m_OSCInstance.setDepth(0);
-                    for (int i = 0; i < harmCnt; i++){
-                        harmArr[i].setDepth(0);
-                    }
+                    // for (int i = 0; i < harmCnt; i++){
+                    //     harmArr[i].setDepth(0);
+                    // }
+
+                    harmArr[0].setDepth(0);
+                    harmArr[1].setDepth(0);
+                    harmArr[2].setDepth(0);
+                    harmArr[3].setDepth(0);
+
                     midiVelocity = 0;
                 }
                 
@@ -182,10 +188,19 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         m_OSCInstance.setMidiNote(midiNotenumber+midiPitchBend);
         m_OSCInstance.setDepth((float)midiVelocity/127.0);
 
-        for (int i = 0; i < harmCnt; i++){
-            harmArr[i].update();
-            harmArr[i].setDepth((float)midiVelocity/127.0);
-        }
+        // for (int i = 0; i < harmCnt; i++){
+        //     harmArr[i].update();
+        //     harmArr[i].setDepth((float)midiVelocity/127.0);
+        // }
+
+            harmArr[0].update();
+            harmArr[0].setDepth((float)midiVelocity/127.0);
+            harmArr[1].update();
+            harmArr[1].setDepth((float)midiVelocity/127.0);
+            harmArr[2].update();
+            harmArr[2].setDepth((float)midiVelocity/127.0);
+            harmArr[3].update();
+            harmArr[3].setDepth((float)midiVelocity/127.0);
     }
 
     //output signal
