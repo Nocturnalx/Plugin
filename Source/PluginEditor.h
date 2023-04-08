@@ -45,6 +45,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void repaintWaveformButtons(int selectedWaveform);
+    void repaintSelectButtons(std::unique_ptr<juce::TextButton> & newButton);
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -57,6 +59,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     JoeProjectAudioProcessor& audioProcessor;
+
+    int selectedWaveformArr[4] = {0,0,0,0};
     //[/UserVariables]
 
     //==============================================================================
@@ -70,30 +74,19 @@ private:
     std::unique_ptr<juce::TextButton> m_squareButton;
     std::unique_ptr<juce::Slider> m_panSlider;
     std::unique_ptr<juce::Label> Pan_label;
-    std::unique_ptr<juce::TextButton> harm1_sineButton;
-    std::unique_ptr<juce::TextButton> harm1_triangleButton;
-    std::unique_ptr<juce::TextButton> harm1_sawButton;
-    std::unique_ptr<juce::TextButton> harm1_squareButton;
+    std::unique_ptr<juce::TextButton> harm_sineButton;
+    std::unique_ptr<juce::TextButton> harm_triangleButton;
+    std::unique_ptr<juce::TextButton> harm_sawButton;
+    std::unique_ptr<juce::TextButton> harm_squareButton;
     std::unique_ptr<juce::Slider> harm1_depthSlider;
-    std::unique_ptr<juce::Slider> harm1_offsetSlider;
-    std::unique_ptr<juce::TextButton> harm2_sineButton;
-    std::unique_ptr<juce::TextButton> harm2_triangleButton;
-    std::unique_ptr<juce::TextButton> harm2_sawButton;
-    std::unique_ptr<juce::TextButton> harm2_squareButton;
+    std::unique_ptr<juce::Slider> harm_offsetSlider;
     std::unique_ptr<juce::Slider> harm2_depthSlider;
-    std::unique_ptr<juce::Slider> harm2_offsetSlider;
-    std::unique_ptr<juce::TextButton> harm3_sineButton;
-    std::unique_ptr<juce::TextButton> harm3_triangleButton;
-    std::unique_ptr<juce::TextButton> harm3_sawButton;
-    std::unique_ptr<juce::TextButton> harm3_squareButton;
     std::unique_ptr<juce::Slider> harm3_depthSlider;
-    std::unique_ptr<juce::Slider> harm3_offsetSlider;
-    std::unique_ptr<juce::TextButton> harm4_sineButton;
-    std::unique_ptr<juce::TextButton> harm4_triangleButton;
-    std::unique_ptr<juce::TextButton> harm4_sawButton;
-    std::unique_ptr<juce::TextButton> harm4_squareButton;
-    std::unique_ptr<juce::Slider> harm4_offsetSlider;
     std::unique_ptr<juce::Slider> harm4_depthSlider;
+    std::unique_ptr<juce::TextButton> harm1_selectButton;
+    std::unique_ptr<juce::TextButton> harm2_selectButton;
+    std::unique_ptr<juce::TextButton> harm3_selectButton;
+    std::unique_ptr<juce::TextButton> harm4_selectButton;
 
 
     //==============================================================================

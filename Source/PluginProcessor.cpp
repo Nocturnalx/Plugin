@@ -81,11 +81,12 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     // initialisation that you need..
 
     harmCnt = 4;
+    selectedHarm = 0;
 
     harmArr[0].init(&m_OSCInstance, 4);
     harmArr[1].init(&m_OSCInstance, 7);
     harmArr[2].init(&m_OSCInstance, 10);
-    harmArr[3].init(&m_OSCInstance, 12);
+    harmArr[3].init(&m_OSCInstance, 11);
 
 }
 
@@ -151,6 +152,10 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 triggerOn = true;
             }
             if (message.isNoteOff()){
+
+                //issue #1
+                //need to check for if two notes are being pressed 
+                //- have note pressed buffer that pushes and pops
 
                 m_OSCInstance.setDepth(0);
                 for (int i = 0; i < harmCnt; i++){
@@ -218,30 +223,62 @@ void JoeProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
     // whose contents will have been created by the getStateInformation() call.
 }
 
-void JoeProjectAudioProcessor::updateParameters(int param, float value){
+//global gain, pan etc. and master osc control
+void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
 
     if (param == kGain){
         m_GainInstance.setGain(value);
     }
 
-    if (param == kFrequency){
-        m_OSCInstance.setFrequency(value);
+    if (param == kPan){
+        m_PanInstance.setPan(value);
     }
 
     if (param == kDepth){
-        m_OSCInstance.setDepth(value);
+        m_OSCInstance.setDepthCoef(value);
     }
 
     if (param == kWaveform){
         m_OSCInstance.setWaveshape((int)value);
     }
+}
 
-    if (param == kPan){
-        m_PanInstance.setPan(value);
+//overload, if no specific harmonic passed use selected harmonic
+void JoeProjectAudioProcessor::updateHarmParameters(int param, float value){
+
+    if (param == kWaveform){
+        harmArr[selectedHarm].setWaveshape((int)value);
+    }
+
+    if (param == kOffset){
+        harmArr[selectedHarm].setHarmonicOffset((int)value);
     }
 }
 
+void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float value){
+    
+    if (param == kDepth){
+        harmArr[harm].setDepthCoef(value);
+    }
 
+    if (param == kPan){
+
+    }
+}
+
+//sets active harmonic class instance
+void JoeProjectAudioProcessor::setHarm(int h){
+    selectedHarm = h;
+}
+
+int JoeProjectAudioProcessor::getSelectedHarm(){
+    return selectedHarm;
+}
+
+//gets harmonic class instance using index
+Harmonic JoeProjectAudioProcessor::getHarm(int h){
+    return harmArr[h];
+}
 
 //==============================================================================
 // This creates new instances of the plugin..

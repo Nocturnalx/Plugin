@@ -16,10 +16,17 @@
 
 enum parameters{
   kGain,
-  kFrequency,
   kDepth,
   kWaveform,
-  kPan
+  kPan,
+  kOffset
+};
+
+enum harmonics{
+  harm1,
+  harm2,
+  harm3,
+  harm4
 };
 
 //==============================================================================
@@ -68,19 +75,27 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void updateParameters(int param, float value);
+    void updateGlobalParameters(int param, float value);
+    void updateHarmParameters(int param, float value);
+    void updateHarmParameters(int harm, int param, float value);
+
+    void setHarm(int harm);
+
+    int getSelectedHarm();
+
+    Harmonic getHarm(int harm);
 
 private:
     Gain m_GainInstance;
     Pan m_PanInstance;
-
     OSC m_OSCInstance;
+
+    int harmCnt;
+    int selectedHarm;
 
     Harmonic harmArr[4];
 
     float noteToFreq(float note);
-
-    int harmCnt;
 
     float midiPitchBend;
     int midiNotenumber;

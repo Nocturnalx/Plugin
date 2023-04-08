@@ -18,6 +18,7 @@ OSC::OSC()
     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
     m_currentPhase = 0.0;
     m_depth = 0.0;
+    m_depthCoef = 1.0;
     m_shape = kSine;
     reset();
 }
@@ -27,19 +28,22 @@ float OSC::process()
     float output = 0.0f;
     
     //get the next sample based on waveshape and depth
+    //change this to function pointer?? 
     switch(m_shape)
     {
         case kSine:
-            output = renderSine(m_currentPhase) * m_depth; break;
+            output = renderSine(m_currentPhase); break;
         case kSquare:
-            output = renderSquare(m_currentPhase) * m_depth; break;
+            output = renderSquare(m_currentPhase); break;
         case kSaw:
-            output = renderSaw(m_currentPhase) * m_depth; break;
+            output = renderSaw(m_currentPhase); break;
         case kTriangle:
-            output = renderTriangle(m_currentPhase) * m_depth; break;
+            output = renderTriangle(m_currentPhase); break;
         default:
             output = 0.0; break;   
     }
+
+    output *= m_depth * m_depthCoef;
   
     //increment the current phase
     m_currentPhase += m_phaseIncrement;
@@ -50,17 +54,23 @@ float OSC::process()
     return output;
 }
 
+void OSC::reset(){
+    m_currentPhase = 0.0f;
+}
+
+
+
 void OSC::setSamplingFrequency(float fs)
 {
     m_fs = fs;
 }
 
-void OSC::setFrequency(float frequency)
-{
-    m_frequency = frequency;
-    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-    //reset();
-}
+// void OSC::setFrequency(float frequency)
+// {
+//     m_frequency = frequency;
+//     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
+//     //reset();
+// }
 
 void OSC::setMidiNote(float note){
     m_midiNote = note;
@@ -69,13 +79,10 @@ void OSC::setMidiNote(float note){
     float f;
     f = (a/32)*pow(2,((note-9)/12));
     
-    std::cout << "note " << f << std::endl;
-
-    setFrequency(f);
-}
-
-int OSC::getMidiNote(){
-    return m_midiNote;
+    //set frequency
+    m_frequency = f;
+    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
+    //reset();
 }
 
 void OSC::setDepth(float depth){
@@ -87,9 +94,16 @@ void OSC::setWaveshape(int shape){
     reset();
 }
 
-float OSC::getFrequency(){
-    return m_frequency;
+void OSC::setDepthCoef(float coef){
+    m_depthCoef = coef;
 }
+
+
+//do we need any of these gets??
+
+// float OSC::getFrequency(){
+//     return m_frequency;
+// }
 
 float OSC::getDepth(){
     return m_depth;
@@ -99,9 +113,10 @@ Waveshape OSC::getWaveshape(){
     return m_shape;
 }
 
-void OSC::reset(){
-    m_currentPhase = 0.0f;
+int OSC::getMidiNote(){
+    return m_midiNote;
 }
+
 
 //render different waveforms
 double OSC::renderSine(double phase)
@@ -125,11 +140,14 @@ double OSC::renderTriangle(double phase)
                                 :  3.0 - (2.0 / PI) * phase);
 }
 
+
+
 Harmonic::Harmonic(){}
 
 void Harmonic::init(OSC * master, int offset){
     m_master = master;
     m_offset = offset;
+    m_depthCoef = 0.0;
 
     update();
 }
@@ -139,6 +157,10 @@ void Harmonic::setHarmonicOffset(int offset){
     m_offset = offset;
 
     update();
+}
+
+int Harmonic::getOffset(){
+    return m_offset;
 }
 
 void Harmonic::update(){

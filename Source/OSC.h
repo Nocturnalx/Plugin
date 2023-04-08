@@ -47,12 +47,13 @@ public:
     float process(); //will output the next LFO value in the range +/-depth
     
     void setSamplingFrequency(float fs);
-    void setFrequency(float frequency);
+    // void setFrequency(float frequency);
     void setMidiNote(float note);
     void setDepth(float depth);
+    void setDepthCoef(float coef);
     void setWaveshape(int shape); //use one of the four shapes in the enum above
     
-    float getFrequency();
+    // float getFrequency();
     float getDepth();
     int getMidiNote();
     Waveshape getWaveshape();
@@ -71,9 +72,9 @@ protected:
     double m_phaseIncrement;
     double m_currentPhase;
     float  m_depth;
+    float m_depthCoef;
     int m_midiNote;
     Waveshape m_shape;
-    
 };
 
 
@@ -86,6 +87,7 @@ class Harmonic : public OSC{
 
     void setHarmonicOffset(int offset);
     void update();
+    int getOffset();
 
   private:
     OSC * m_master;
