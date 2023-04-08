@@ -95,11 +95,11 @@ private:
 
     Harmonic harmArr[4];
 
-    float noteToFreq(float note);
-
     float midiPitchBend;
     int midiNotenumber;
     int midiVelocity;
+
+    int notesPressed;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JoeProjectAudioProcessor)

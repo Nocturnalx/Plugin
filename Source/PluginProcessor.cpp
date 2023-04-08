@@ -83,6 +83,8 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     harmCnt = 4;
     selectedHarm = 0;
 
+    notesPressed = 0;
+
     harmArr[0].init(&m_OSCInstance, 4);
     harmArr[1].init(&m_OSCInstance, 7);
     harmArr[2].init(&m_OSCInstance, 10);
@@ -121,12 +123,6 @@ bool JoeProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 }
 #endif
 
-// float JoeProjectAudioProcessor::noteToFreq(float note){
-//     float a = 440;
-//     float freq;
-//     freq = (a/32)*pow(2,((note-9)/12));
-//     return freq;
-// }
 
 void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages){
     
@@ -137,7 +133,7 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     float* leftData = buffer.getWritePointer(0);
     float* rightData = buffer.getWritePointer(1);
 
-    int triggerOn = false;
+    // int triggerOn = false;
     midiPitchBend = 0;
 
     if (midiMessages.isEmpty() == false){
@@ -149,7 +145,10 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 midiNotenumber = message.getNoteNumber();
                 midiVelocity = message.getVelocity();
                 m_OSCInstance.reset();
-                triggerOn = true;
+
+                notesPressed++;
+
+                // triggerOn = true;
             }
             if (message.isNoteOff()){
 
@@ -157,22 +156,28 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 //need to check for if two notes are being pressed 
                 //- have note pressed buffer that pushes and pops
 
-                m_OSCInstance.setDepth(0);
-                for (int i = 0; i < harmCnt; i++){
-                    harmArr[i].setDepth(0);
+                notesPressed--;
+
+                if(notesPressed == 0){
+                    m_OSCInstance.setDepth(0);
+                    for (int i = 0; i < harmCnt; i++){
+                        harmArr[i].setDepth(0);
+                    }
+                    midiVelocity = 0;
                 }
-                midiVelocity = 0;
-                triggerOn = false;
+                
+                // triggerOn = false;
             }
             if (message.isPitchWheel()){
 
                 midiPitchBend = ((float)message.getPitchWheelValue()-8191.0)/682.66;
-                triggerOn = true;
+                
+                // triggerOn = true;
             }
         }
     }
 
-    if (triggerOn){
+    if (notesPressed > 0){
 
         m_OSCInstance.setMidiNote(midiNotenumber+midiPitchBend);
         m_OSCInstance.setDepth((float)midiVelocity/127.0);
@@ -189,9 +194,15 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         float samp;
         samp = m_OSCInstance.process();
 
-        for (int i = 0; i < harmCnt; i++){
-            samp += harmArr[i].process();
-        }
+        //why would this not work??? memory access takes longer in loop?? time to proc is too long???
+        // for (int i = 0; i < harmCnt; i++){
+        //     samp += harmArr[i].process();
+        // }
+
+        samp += harmArr[0].process();
+        samp += harmArr[1].process();
+        samp += harmArr[2].process();
+        samp += harmArr[3].process();
 
         samp /= harmCnt + 1;
 
