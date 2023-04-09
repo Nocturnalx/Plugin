@@ -337,7 +337,7 @@ void JoeProjectAudioProcessorEditor::sliderValueChanged (juce::Slider* sliderTha
     else if (sliderThatWasMoved == harm1_depthSlider.get())
     {
         //[UserSliderCode_harm1_depthSlider] -- add your slider handling code here..
-        audioProcessor.updateHarmParameters(0, kDepth, harm1_depthSlider->getValue());
+        audioProcessor.updateHarmParameters(harm1, kDepth, harm1_depthSlider->getValue());
         //[/UserSliderCode_harm1_depthSlider]
     }
     else if (sliderThatWasMoved == harm_offsetSlider.get())
@@ -349,19 +349,19 @@ void JoeProjectAudioProcessorEditor::sliderValueChanged (juce::Slider* sliderTha
     else if (sliderThatWasMoved == harm2_depthSlider.get())
     {
         //[UserSliderCode_harm2_depthSlider] -- add your slider handling code here..
-        audioProcessor.updateHarmParameters(1, kDepth, harm2_depthSlider->getValue());
+        audioProcessor.updateHarmParameters(harm2, kDepth, harm2_depthSlider->getValue());
         //[/UserSliderCode_harm2_depthSlider]
     }
     else if (sliderThatWasMoved == harm3_depthSlider.get())
     {
         //[UserSliderCode_harm3_depthSlider] -- add your slider handling code here..
-        audioProcessor.updateHarmParameters(2, kDepth, harm3_depthSlider->getValue());
+        audioProcessor.updateHarmParameters(harm3, kDepth, harm3_depthSlider->getValue());
         //[/UserSliderCode_harm3_depthSlider]
     }
     else if (sliderThatWasMoved == harm4_depthSlider.get())
     {
         //[UserSliderCode_harm4_depthSlider] -- add your slider handling code here..
-        audioProcessor.updateHarmParameters(3, kDepth, harm4_depthSlider->getValue());
+        audioProcessor.updateHarmParameters(harm4, kDepth, harm4_depthSlider->getValue());
         //[/UserSliderCode_harm4_depthSlider]
     }
 
@@ -438,7 +438,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintSelectButtons(harm1_selectButton);
         repaintWaveformButtons(selectedWaveformArr[audioProcessor.getSelectedHarm()]);
 
-        harm_offsetSlider->setValue(audioProcessor.getHarm(harm1).getOffset());
+        harm_offsetSlider->setValue(audioProcessor.getHarm(harm1)->getOffset());
         //[/UserButtonCode_harm1_selectButton]
     }
     else if (buttonThatWasClicked == harm2_selectButton.get())
@@ -449,7 +449,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintSelectButtons(harm2_selectButton);
         repaintWaveformButtons(selectedWaveformArr[audioProcessor.getSelectedHarm()]);
 
-        harm_offsetSlider->setValue(audioProcessor.getHarm(harm2).getOffset());
+        harm_offsetSlider->setValue(audioProcessor.getHarm(harm2)->getOffset());
         //[/UserButtonCode_harm2_selectButton]
     }
     else if (buttonThatWasClicked == harm3_selectButton.get())
@@ -460,7 +460,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintSelectButtons(harm3_selectButton);
         repaintWaveformButtons(selectedWaveformArr[audioProcessor.getSelectedHarm()]);
 
-        harm_offsetSlider->setValue(audioProcessor.getHarm(harm3).getOffset());
+        harm_offsetSlider->setValue(audioProcessor.getHarm(harm3)->getOffset());
         //[/UserButtonCode_harm3_selectButton]
     }
     else if (buttonThatWasClicked == harm4_selectButton.get())
@@ -471,7 +471,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintSelectButtons(harm4_selectButton);
         repaintWaveformButtons(selectedWaveformArr[audioProcessor.getSelectedHarm()]);
 
-        harm_offsetSlider->setValue(audioProcessor.getHarm(harm4).getOffset());
+        harm_offsetSlider->setValue(audioProcessor.getHarm(harm4)->getOffset());
         //[/UserButtonCode_harm4_selectButton]
     }
 

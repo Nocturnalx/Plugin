@@ -85,11 +85,23 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     notesPressed = 0;
 
-    harmArr[0].init(&m_OSCInstance, 4);
-    harmArr[1].init(&m_OSCInstance, 7);
-    harmArr[2].init(&m_OSCInstance, 10);
-    harmArr[3].init(&m_OSCInstance, 11);
+    Harmonic * harmPointer;
 
+    harmPointer = new Harmonic;
+    harmPointer->init(&m_OSCInstance, 4);
+    harmArr[0] = harmPointer;
+    
+    harmPointer = new Harmonic;
+    harmPointer->init(&m_OSCInstance, 7);
+    harmArr[1] = harmPointer;
+    
+    harmPointer = new Harmonic;
+    harmPointer->init(&m_OSCInstance, 10);
+    harmArr[2] = harmPointer;
+    
+    harmPointer = new Harmonic;
+    harmPointer->init(&m_OSCInstance, 11);
+    harmArr[3] = harmPointer;
 }
 
 void JoeProjectAudioProcessor::releaseResources(){
@@ -161,7 +173,7 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 if(notesPressed == 0){
                     m_OSCInstance.setDepth(0);
                     for (int i = 0; i < harmCnt; i++){
-                        harmArr[i].setDepth(0);
+                        harmArr[i]->setDepth(0);
                     }
 
                     midiVelocity = 0;
@@ -184,31 +196,26 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         m_OSCInstance.setDepth((float)midiVelocity/127.0);
 
         for (int i = 0; i < harmCnt; i++){
-            harmArr[i].update();
-            harmArr[i].setDepth((float)midiVelocity/127.0);
+            harmArr[i]->update();
+            harmArr[i]->setDepth((float)midiVelocity/127.0);
         }
     }
 
     //output signal
     for (int i = 0; i < buffer.getNumSamples(); i++){
         
-        float samp;
-        samp = m_OSCInstance.process();
+        float samp = 0;
+        samp += m_OSCInstance.process();
 
-        //why would this not work??? memory access takes longer in loop?? time to proc is too long???
-        // for (int i = 0; i < harmCnt; i++){
-        //     samp += harmArr[i].process();
-        // }
-
-        samp += harmArr[0].process();
-        samp += harmArr[1].process();
-        samp += harmArr[2].process();
-        samp += harmArr[3].process();
+        for (int i = 1; i < 2; i++){
+            samp += harmArr[i]->process();
+        }
 
         samp /= harmCnt + 1;
 
         leftData[i] = samp;
         rightData[i] = samp;
+
         m_PanInstance.process(leftData[i], rightData[i]);
         m_GainInstance.process(leftData[i], rightData[i]);
     }
@@ -259,18 +266,18 @@ void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
 void JoeProjectAudioProcessor::updateHarmParameters(int param, float value){
 
     if (param == kWaveform){
-        harmArr[selectedHarm].setWaveshape((int)value);
+        harmArr[selectedHarm]->setWaveshape((int)value);
     }
 
     if (param == kOffset){
-        harmArr[selectedHarm].setHarmonicOffset((int)value);
+        harmArr[selectedHarm]->setHarmonicOffset((int)value);
     }
 }
 
 void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float value){
     
     if (param == kDepth){
-        harmArr[harm].setDepthCoef(value);
+        harmArr[harm]->setDepthCoef(value);
     }
 
     if (param == kPan){
@@ -288,7 +295,7 @@ int JoeProjectAudioProcessor::getSelectedHarm(){
 }
 
 //gets harmonic class instance using index
-Harmonic JoeProjectAudioProcessor::getHarm(int h){
+Harmonic * JoeProjectAudioProcessor::getHarm(int h){
     return harmArr[h];
 }
 

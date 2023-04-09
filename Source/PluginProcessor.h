@@ -83,7 +83,7 @@ public:
 
     int getSelectedHarm();
 
-    Harmonic getHarm(int harm);
+    Harmonic * getHarm(int harm);
 
 private:
     Gain m_GainInstance;
@@ -93,7 +93,7 @@ private:
     int harmCnt;
     int selectedHarm;
 
-    Harmonic harmArr[4];
+    Harmonic * harmArr[4];
 
     float midiPitchBend;
     int midiNotenumber;

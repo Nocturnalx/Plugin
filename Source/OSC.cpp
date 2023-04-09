@@ -14,7 +14,8 @@
 OSC::OSC()
 {
     m_fs = 44100; //make dyn
-    m_frequency = 1.0;
+    m_frequency = 440;
+    m_midiNote = 69;
     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
     m_currentPhase = 0.0;
     m_depth = 0.0;
@@ -57,8 +58,6 @@ float OSC::process()
 void OSC::reset(){
     m_currentPhase = 0.0f;
 }
-
-
 
 void OSC::setSamplingFrequency(float fs)
 {
@@ -109,6 +108,7 @@ float OSC::getDepth(){
     return m_depth;
 }
 
+//gets current waveshape, used for painting
 Waveshape OSC::getWaveshape(){
     return m_shape;
 }
@@ -142,7 +142,9 @@ double OSC::renderTriangle(double phase)
 
 
 
-Harmonic::Harmonic(){}
+Harmonic::Harmonic(){
+    m_offset = 0;
+}
 
 void Harmonic::init(OSC * master, int offset){
     m_master = master;
