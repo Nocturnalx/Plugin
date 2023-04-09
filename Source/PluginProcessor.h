@@ -80,15 +80,13 @@ public:
     void updateHarmParameters(int harm, int param, float value);
 
     void setHarm(int harm);
-
     int getSelectedHarm();
-
     Harmonic * getHarm(int harm);
 
 private:
-    Gain m_GainInstance;
-    Pan m_PanInstance;
-    OSC m_OSCInstance;
+    Gain * m_GainInstance;
+    Pan * m_PanInstance;
+    Master * m_OSCMaster;
 
     int harmCnt;
     int selectedHarm;

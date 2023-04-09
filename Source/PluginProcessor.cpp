@@ -79,28 +79,28 @@ void JoeProjectAudioProcessor::changeProgramName (int index, const juce::String&
 void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock){
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-
-    harmCnt = 4;
-    selectedHarm = 0;
+    std::cout << "Praise the Omnissiah!" << std::endl;
 
     notesPressed = 0;
 
-    Harmonic * harmPointer;
+    m_GainInstance = new Gain;
 
-    harmPointer = new Harmonic;
-    harmPointer->init(&m_OSCInstance, 4);
+    m_PanInstance = new Pan;
+
+    m_OSCMaster = new Master(sampleRate);
+
+    harmCnt = 4;
+    selectedHarm = 0;
+    
+    Harmonic * harmPointer;
+    
+    harmPointer = new Harmonic(m_OSCMaster, 4, sampleRate);
     harmArr[0] = harmPointer;
-    
-    harmPointer = new Harmonic;
-    harmPointer->init(&m_OSCInstance, 7);
+    harmPointer = new Harmonic(m_OSCMaster, 7, sampleRate);
     harmArr[1] = harmPointer;
-    
-    harmPointer = new Harmonic;
-    harmPointer->init(&m_OSCInstance, 10);
+    harmPointer = new Harmonic(m_OSCMaster, 10, sampleRate);
     harmArr[2] = harmPointer;
-    
-    harmPointer = new Harmonic;
-    harmPointer->init(&m_OSCInstance, 11);
+    harmPointer = new Harmonic(m_OSCMaster, 11, sampleRate);
     harmArr[3] = harmPointer;
 }
 
@@ -145,7 +145,6 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     float* leftData = buffer.getWritePointer(0);
     float* rightData = buffer.getWritePointer(1);
 
-    // int triggerOn = false;
     midiPitchBend = 0;
 
     if (midiMessages.isEmpty() == false){
@@ -154,24 +153,29 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             // const auto time = metadata.samplePosition;
             if (message.isNoteOn()){
 
+                //reset osc envs
+                m_OSCMaster->env->reset();
+                for (int i = 0; i < harmCnt; i++){
+                    harmArr[i]->env->reset();
+                }
+
+                //set midi
                 midiNotenumber = message.getNoteNumber();
                 midiVelocity = message.getVelocity();
-                m_OSCInstance.reset();
+
+                //reset osc phase
+                m_OSCMaster->reset();
 
                 notesPressed++;
 
-                // triggerOn = true;
             }
             if (message.isNoteOff()){
 
-                //issue #1
-                //need to check for if two notes are being pressed 
-                //- have note pressed buffer that pushes and pops
-
                 notesPressed--;
 
+                //if no more held down turn it all off
                 if(notesPressed == 0){
-                    m_OSCInstance.setDepth(0);
+                    m_OSCMaster->setDepth(0);
                     for (int i = 0; i < harmCnt; i++){
                         harmArr[i]->setDepth(0);
                     }
@@ -179,21 +183,19 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                     midiVelocity = 0;
                 }
                 
-                // triggerOn = false;
             }
             if (message.isPitchWheel()){
 
                 midiPitchBend = ((float)message.getPitchWheelValue()-8191.0)/682.66;
                 
-                // triggerOn = true;
             }
         }
     }
 
     if (notesPressed > 0){
 
-        m_OSCInstance.setMidiNote(midiNotenumber+midiPitchBend);
-        m_OSCInstance.setDepth((float)midiVelocity/127.0);
+        m_OSCMaster->setMidiNote(midiNotenumber+midiPitchBend);
+        m_OSCMaster->setDepth((float)midiVelocity/127.0);
 
         for (int i = 0; i < harmCnt; i++){
             harmArr[i]->update();
@@ -205,19 +207,21 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     for (int i = 0; i < buffer.getNumSamples(); i++){
         
         float samp = 0;
-        samp += m_OSCInstance.process();
+        samp += m_OSCMaster->process();
 
-        for (int i = 1; i < 2; i++){
-            samp += harmArr[i]->process();
-        }
+        // for (int i = 0; i < harmCnt; i++){
+        //     samp += harmArr[i]->process();
+        // }
 
-        samp /= harmCnt + 1;
+        // samp /= harmCnt + 1;
+
+        std::cout << "samp: " << samp << std::endl;
 
         leftData[i] = samp;
         rightData[i] = samp;
 
-        m_PanInstance.process(leftData[i], rightData[i]);
-        m_GainInstance.process(leftData[i], rightData[i]);
+        m_PanInstance->process(leftData[i], rightData[i]);
+        m_GainInstance->process(leftData[i], rightData[i]);
     }
 }
 
@@ -246,19 +250,19 @@ void JoeProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
 void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
 
     if (param == kGain){
-        m_GainInstance.setGain(value);
+        m_GainInstance->setGain(value);
     }
 
     if (param == kPan){
-        m_PanInstance.setPan(value);
+        m_PanInstance->setPan(value);
     }
 
     if (param == kDepth){
-        m_OSCInstance.setDepthCoef(value);
+        m_OSCMaster->setDepthCoef(value);
     }
 
     if (param == kWaveform){
-        m_OSCInstance.setWaveshape((int)value);
+        m_OSCMaster->setWaveshape((int)value);
     }
 }
 

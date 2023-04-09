@@ -15,10 +15,6 @@ Gain::Gain()
   m_gain = 1;
 }
 
-Gain::~Gain()
-{
-}
-
 void Gain::setGain(float gain)
 {
 	m_gain = gain;
@@ -36,6 +32,6 @@ void Gain::initialise(float gain)
 
 void Gain::process(float &leftSample, float &rightSample)
 {
-	leftSample = leftSample * m_gain;
-	rightSample = rightSample * m_gain;
+	leftSample *= m_gain;
+	rightSample *= m_gain;
 }

@@ -13,15 +13,6 @@
 
 OSC::OSC()
 {
-    m_fs = 44100; //make dyn
-    m_frequency = 440;
-    m_midiNote = 69;
-    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-    m_currentPhase = 0.0;
-    m_depth = 0.0;
-    m_depthCoef = 1.0;
-    m_shape = kSine;
-    reset();
 }
 
 float OSC::process()
@@ -45,6 +36,8 @@ float OSC::process()
     }
 
     output *= m_depth * m_depthCoef;
+
+    env->process(output);
   
     //increment the current phase
     m_currentPhase += m_phaseIncrement;
@@ -58,18 +51,6 @@ float OSC::process()
 void OSC::reset(){
     m_currentPhase = 0.0f;
 }
-
-void OSC::setSamplingFrequency(float fs)
-{
-    m_fs = fs;
-}
-
-// void OSC::setFrequency(float frequency)
-// {
-//     m_frequency = frequency;
-//     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-//     //reset();
-// }
 
 void OSC::setMidiNote(float note){
     m_midiNote = note;
@@ -97,22 +78,21 @@ void OSC::setDepthCoef(float coef){
     m_depthCoef = coef;
 }
 
+void OSC::setFS(double fs){
+    m_fs = fs;
+
+    env->setFS(m_fs);
+}
+
 
 //do we need any of these gets??
-
-// float OSC::getFrequency(){
-//     return m_frequency;
-// }
-
-float OSC::getDepth(){
-    return m_depth;
-}
 
 //gets current waveshape, used for painting
 Waveshape OSC::getWaveshape(){
     return m_shape;
 }
 
+//get by harm update()
 int OSC::getMidiNote(){
     return m_midiNote;
 }
@@ -141,12 +121,44 @@ double OSC::renderTriangle(double phase)
 }
 
 
+//master defs
+Master::Master(double fs){
+    //defaults
+    m_frequency = 440;
+    m_midiNote = 69;
+    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
+    m_currentPhase = 0.0;
+    m_depth = 0.0;
+    m_shape = kSine;
 
-Harmonic::Harmonic(){
-    m_offset = 0;
+    env = new ADSR;
+
+    reset();
+
+    setFS(fs);
+
+    //unique
+    m_depthCoef = 1.0;
 }
 
-void Harmonic::init(OSC * master, int offset){
+//Harmonic defs
+
+Harmonic::Harmonic(OSC * master, int offset, double fs){
+    //defaults
+    m_frequency = 440;
+    m_midiNote = 69;
+    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
+    m_currentPhase = 0.0;
+    m_depth = 0.0;
+    m_shape = kSine;
+
+    env = new ADSR;
+
+    reset();
+
+    setFS(fs);
+
+    //unique
     m_master = master;
     m_offset = offset;
     m_depthCoef = 0.0;

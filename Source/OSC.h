@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include "ADSR.h"
+
 enum Waveshape {
     kSine,
     kTriangle,
@@ -38,29 +40,27 @@ enum Waveshape {
     kSquare
 };
 
-class OSC
-{
-public:
+class OSC{
+  public:
     
     OSC();
     
     float process(); //will output the next LFO value in the range +/-depth
     
-    void setSamplingFrequency(float fs);
-    // void setFrequency(float frequency);
     void setMidiNote(float note);
     void setDepth(float depth);
     void setDepthCoef(float coef);
     void setWaveshape(int shape); //use one of the four shapes in the enum above
+    void setFS(double fs);
     
-    // float getFrequency();
-    float getDepth();
     int getMidiNote();
     Waveshape getWaveshape();
     
     void reset();
+
+    ADSR * env;
     
-protected:
+  protected:
     
     double renderSine(double phase);
     double renderSquare(double phase);
@@ -77,13 +77,17 @@ protected:
     Waveshape m_shape;
 };
 
+class Master : public OSC{
+  public:
+    Master(double fs);
+};
 
 class Harmonic : public OSC{
 
   public: 
-    Harmonic();
+    Harmonic(OSC * master, int offset, double fs);
 
-    void init(OSC * master, int offset);
+    // void init(OSC * master, int offset);
 
     void setHarmonicOffset(int offset);
     void update();
@@ -93,5 +97,4 @@ class Harmonic : public OSC{
     OSC * m_master;
 
     int m_offset;
-    
 };

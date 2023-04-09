@@ -251,8 +251,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
 
     //[Constructor] You can add your own custom stuff here..
-    repaintSelectButtons(harm1_selectButton);
-    repaintWaveformButtons(selectedWaveformArr[harm1]);
+    harm1_selectButton->triggerClick();
     //[/Constructor]
 }
 

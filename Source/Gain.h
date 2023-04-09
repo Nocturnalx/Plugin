@@ -18,8 +18,8 @@ public:
 	void setGain(float gain);
 	float getGain();
 	void initialise(float gain);
-	void process(float& lefsample, float& rightsample);
+	void process(float& leftsample, float& rightsample);
 
-private:
+protected:
 	float m_gain;
 };
