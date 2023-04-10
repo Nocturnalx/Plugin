@@ -70,7 +70,7 @@ void OSC::setDepth(float depth){
 }
 
 void OSC::setWaveshape(int shape){
-    m_shape = (Waveshape)shape;
+    m_shape = (waveshapes)shape;
     reset();
 }
 
@@ -82,13 +82,16 @@ void OSC::setFS(double fs){
     m_fs = fs;
 
     env->setFS(m_fs);
+
+    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
+    m_currentPhase = 0.0;
 }
 
 
 //do we need any of these gets??
 
 //gets current waveshape, used for painting
-Waveshape OSC::getWaveshape(){
+waveshapes OSC::getWaveshape(){
     return m_shape;
 }
 
@@ -124,10 +127,7 @@ double OSC::renderTriangle(double phase)
 //master defs
 Master::Master(double fs){
     //defaults
-    m_frequency = 440;
-    m_midiNote = 69;
-    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-    m_currentPhase = 0.0;
+    setMidiNote(69);
     m_depth = 0.0;
     m_shape = kSine;
 
@@ -145,10 +145,7 @@ Master::Master(double fs){
 
 Harmonic::Harmonic(OSC * master, int offset, double fs){
     //defaults
-    m_frequency = 440;
-    m_midiNote = 69;
-    m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-    m_currentPhase = 0.0;
+    setMidiNote(69);
     m_depth = 0.0;
     m_shape = kSine;
 

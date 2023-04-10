@@ -185,9 +185,7 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 
             }
             if (message.isPitchWheel()){
-
                 midiPitchBend = ((float)message.getPitchWheelValue()-8191.0)/682.66;
-                
             }
         }
     }
@@ -209,13 +207,13 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         float samp = 0;
         samp += m_OSCMaster->process();
 
-        // for (int i = 0; i < harmCnt; i++){
-        //     samp += harmArr[i]->process();
-        // }
+        for (int i = 0; i < harmCnt; i++){
+            samp += harmArr[i]->process();
+        }
 
-        // samp /= harmCnt + 1;
+        samp /= harmCnt + 1;
 
-        std::cout << "samp: " << samp << std::endl;
+        // std::cout << "samp: " << samp << std::endl;
 
         leftData[i] = samp;
         rightData[i] = samp;
@@ -247,8 +245,9 @@ void JoeProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
 }
 
 //global gain, pan etc. and master osc control
-void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
+void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, float value){
 
+    //mix values
     if (param == kGain){
         m_GainInstance->setGain(value);
     }
@@ -257,41 +256,131 @@ void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
         m_PanInstance->setPan(value);
     }
 
+    //master OSC values
     if (param == kDepth){
         m_OSCMaster->setDepthCoef(value);
     }
+}
+
+//overload: waveshapes
+void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, waveshapes value){
 
     if (param == kWaveform){
-        m_OSCMaster->setWaveshape((int)value);
+        m_OSCMaster->setWaveshape(value);
     }
 }
 
-//overload, if no specific harmonic passed use selected harmonic
-void JoeProjectAudioProcessor::updateHarmParameters(int param, float value){
+//overload for two specifiers and a value (ADSR)
+void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, ADSRParams param2, float value){
 
-    if (param == kWaveform){
-        harmArr[selectedHarm]->setWaveshape((int)value);
+    if (param == kADSR){
+        if (param2 == kAttack){
+            m_OSCMaster->env->setAttack(value);
+        }
+        if (param2 == kDecay){
+            m_OSCMaster->env->setDecay(value);
+        }
+        if (param2 == kSustain){
+            m_OSCMaster->env->setSustainTime(value);
+        }
+        if (param2 == kSustainHeight){
+            m_OSCMaster->env->setSustainHeight(value);
+        }
+        if (param2 == kRelease){
+            m_OSCMaster->env->setRelease(value);
+        }
     }
+}
 
+//overload: change params on passed harm instance
+void JoeProjectAudioProcessor::updateHarmParameters(harmonics harm, parameters param, float value){
+    
+    if (param == kDepth){
+        harmArr[harm]->setDepthCoef(value);
+    }
+}
+
+//overload: if no specific harmonic passed use selected harmonic
+void JoeProjectAudioProcessor::updateHarmParameters(parameters param, float value){
     if (param == kOffset){
         harmArr[selectedHarm]->setHarmonicOffset((int)value);
     }
 }
 
-void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float value){
-    
-    if (param == kDepth){
-        harmArr[harm]->setDepthCoef(value);
-    }
+//overload: waveshapes
+void JoeProjectAudioProcessor::updateHarmParameters(parameters param, waveshapes value){
 
-    if (param == kPan){
-
+    if (param == kWaveform){
+        harmArr[selectedHarm]->setWaveshape(value);
     }
 }
 
+//overload: for two specifiers and a value (ADSR)
+void JoeProjectAudioProcessor::updateHarmParameters(parameters param, ADSRParams param2, float value){
+
+    if (param == kADSR){
+        if (param2 == kAttack){
+            harmArr[selectedHarm]->env->setAttack(value);
+        }
+        if (param2 == kDecay){
+            harmArr[selectedHarm]->env->setDecay(value);
+        }
+        if (param2 == kSustain){
+            harmArr[selectedHarm]->env->setSustainTime(value);
+        }
+        if (param2 == kSustainHeight){
+            harmArr[selectedHarm]->env->setSustainHeight(value);
+        }
+        if (param2 == kRelease){
+            harmArr[selectedHarm]->env->setRelease(value);
+        }
+    }
+}
+
+//returns ADSR info for master osc
+float JoeProjectAudioProcessor::getOscADSR(ADSRParams param){
+    if (param == kAttack){
+        return m_OSCMaster->env->getAttack();
+    }
+    if (param == kDecay){
+        return m_OSCMaster->env->getDecay();
+    }
+    if (param == kSustain){
+        return m_OSCMaster->env->getSustain();
+    }
+    if (param == kSustainHeight){
+        return m_OSCMaster->env->getSustainHeight();
+    }
+    if (param == kRelease){
+        return m_OSCMaster->env->getRelease();
+    }
+    //if none send -1
+    return -1;
+}
+
+float JoeProjectAudioProcessor::getOscADSR(ADSRParams param, harmonics harm){
+    if (param == kAttack){
+        return harmArr[harm]->env->getAttack();
+    }
+    if (param == kDecay){
+        return harmArr[harm]->env->getDecay();
+    }
+    if (param == kSustain){
+        return harmArr[harm]->env->getSustain();
+    }
+    if (param == kSustainHeight){
+        return harmArr[harm]->env->getSustainHeight();
+    }
+    if (param == kRelease){
+        return harmArr[harm]->env->getRelease();
+    }
+    //if none send -1
+    return -1;
+}
+
 //sets active harmonic class instance
-void JoeProjectAudioProcessor::setHarm(int h){
-    selectedHarm = h;
+void JoeProjectAudioProcessor::setHarm(harmonics harm){
+    selectedHarm = harm;
 }
 
 int JoeProjectAudioProcessor::getSelectedHarm(){
@@ -299,8 +388,8 @@ int JoeProjectAudioProcessor::getSelectedHarm(){
 }
 
 //gets harmonic class instance using index
-Harmonic * JoeProjectAudioProcessor::getHarm(int h){
-    return harmArr[h];
+int JoeProjectAudioProcessor::getHarmOffset(harmonics harm){
+    return harmArr[harm]->getOffset();
 }
 
 //==============================================================================

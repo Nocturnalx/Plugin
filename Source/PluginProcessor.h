@@ -19,7 +19,16 @@ enum parameters{
   kDepth,
   kWaveform,
   kPan,
-  kOffset
+  kOffset,
+  kADSR
+};
+
+enum ADSRParams{
+  kAttack,
+  kDecay,
+  kSustain,
+  kSustainHeight,
+  kRelease
 };
 
 enum harmonics{
@@ -75,23 +84,30 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void updateGlobalParameters(int param, float value);
-    void updateHarmParameters(int param, float value);
-    void updateHarmParameters(int harm, int param, float value);
+    void updateGlobalParameters(parameters param, waveshapes value);
+    void updateGlobalParameters(parameters param, float value);
+    void updateGlobalParameters(parameters param, ADSRParams param2, float value);
 
-    void setHarm(int harm);
+    void updateHarmParameters(parameters param, float value);
+    void updateHarmParameters(parameters param, waveshapes value);
+    void updateHarmParameters(parameters param, ADSRParams param2, float value);
+    void updateHarmParameters(harmonics harm, parameters param, float value);
+
+    float getOscADSR(ADSRParams param);
+    float getOscADSR(ADSRParams param, harmonics harm);
+
     int getSelectedHarm();
-    Harmonic * getHarm(int harm);
+    void setHarm(harmonics harm);
+    int getHarmOffset(harmonics harm);
 
 private:
     Gain * m_GainInstance;
     Pan * m_PanInstance;
     Master * m_OSCMaster;
+    Harmonic * harmArr[4];
 
     int harmCnt;
     int selectedHarm;
-
-    Harmonic * harmArr[4];
 
     float midiPitchBend;
     int midiNotenumber;

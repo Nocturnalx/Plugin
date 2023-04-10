@@ -45,7 +45,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void repaintWaveformButtons(int selectedWaveform);
+    void repaintWfButtons(std::unique_ptr<juce::TextButton> & newButton);
+    void repaintHarmWfButtons(int harmWaveform);
     void repaintSelectButtons(std::unique_ptr<juce::TextButton> & newButton);
     //[/UserMethods]
 
@@ -60,10 +61,14 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     JoeProjectAudioProcessor& audioProcessor;
 
-    int selectedWaveformArr[4] = {0,0,0,0};
+    int harmWaveformArr[4] = {0,0,0,0};
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<juce::GroupComponent> effects_group;
+    std::unique_ptr<juce::GroupComponent> effects_group2;
+    std::unique_ptr<juce::GroupComponent> master_group;
+    std::unique_ptr<juce::GroupComponent> harmonics_group;
     std::unique_ptr<juce::Slider> m_depthSlider;
     std::unique_ptr<juce::Label> juce__label;
     std::unique_ptr<juce::Slider> m_gainSlider;
@@ -87,6 +92,28 @@ private:
     std::unique_ptr<juce::TextButton> harm2_selectButton;
     std::unique_ptr<juce::TextButton> harm3_selectButton;
     std::unique_ptr<juce::TextButton> harm4_selectButton;
+    std::unique_ptr<juce::Slider> m_attackSlider;
+    std::unique_ptr<juce::Slider> m_decaySlider;
+    std::unique_ptr<juce::Slider> m_sustainSlider;
+    std::unique_ptr<juce::Slider> m_releaseSlider;
+    std::unique_ptr<juce::Slider> harm_attackSlider;
+    std::unique_ptr<juce::Slider> harm_decaySlider;
+    std::unique_ptr<juce::Slider> harm_sustainSlider;
+    std::unique_ptr<juce::Slider> harm_releaseSlider;
+    std::unique_ptr<juce::Label> attack_label;
+    std::unique_ptr<juce::Label> decay_label;
+    std::unique_ptr<juce::Label> sustain_label;
+    std::unique_ptr<juce::Label> release_label;
+    std::unique_ptr<juce::Label> attack_label2;
+    std::unique_ptr<juce::Label> decay_label2;
+    std::unique_ptr<juce::Label> sustain_label2;
+    std::unique_ptr<juce::Label> release_label2;
+    std::unique_ptr<juce::Slider> m_sustainHeightSlider;
+    std::unique_ptr<juce::Slider> harm_sustainHeightSlider;
+    std::unique_ptr<juce::Label> sustainHeight_label;
+    std::unique_ptr<juce::Label> sustainHeight_label2;
+    std::unique_ptr<juce::Label> time_label;
+    std::unique_ptr<juce::Label> time_label2;
 
 
     //==============================================================================

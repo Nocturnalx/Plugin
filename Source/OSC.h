@@ -33,7 +33,7 @@
 
 #include "ADSR.h"
 
-enum Waveshape {
+enum waveshapes {
     kSine,
     kTriangle,
     kSaw,
@@ -54,7 +54,7 @@ class OSC{
     void setFS(double fs);
     
     int getMidiNote();
-    Waveshape getWaveshape();
+    waveshapes getWaveshape();
     
     void reset();
 
@@ -74,7 +74,7 @@ class OSC{
     float  m_depth;
     float m_depthCoef;
     int m_midiNote;
-    Waveshape m_shape;
+    waveshapes m_shape;
 };
 
 class Master : public OSC{
