@@ -795,7 +795,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
 
         repaintSelectButtons(harm1_selectButton);
         repaintHarmWfButtons(harmWaveformArr[audioProcessor.getSelectedHarm()]);
-        
+
         //set offset slider
         harm_offsetSlider->setValue(audioProcessor.getHarmOffset(harm1));
 

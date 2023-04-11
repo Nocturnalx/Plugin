@@ -12,6 +12,7 @@
 #include "Gain.h"
 #include "OSC.h"
 #include "Pan.h"
+#include "Delay.h"
 #include <math.h>
 
 enum parameters{
@@ -101,10 +102,12 @@ public:
     int getHarmOffset(harmonics harm);
 
 private:
-    Gain * m_GainInstance;
-    Pan * m_PanInstance;
-    Master * m_OSCMaster;
-    Harmonic * harmArr[4];
+    std::unique_ptr<Gain> m_GainInstance;
+    std::unique_ptr<Pan> m_PanInstance;
+    std::unique_ptr<Delay> m_DelayInstance;
+
+    std::unique_ptr<Master> m_OSCMaster;
+    std::unique_ptr <Harmonic []> harmArr;
 
     int harmCnt;
     int selectedHarm;

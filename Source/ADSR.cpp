@@ -23,6 +23,10 @@ ADSR::ADSR(){
   setFS(44100);
 }
 
+ADSR::~ADSR(){
+  
+}
+
 void ADSR::process(float& sample){
 
   //this is only linear atm (issue #3)

@@ -15,6 +15,10 @@ Gain::Gain()
   m_gain = 1;
 }
 
+Gain::~Gain()
+{
+}
+
 void Gain::setGain(float gain)
 {
 	m_gain = gain;

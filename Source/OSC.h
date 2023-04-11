@@ -32,6 +32,7 @@
 #pragma once
 
 #include "ADSR.h"
+#include <memory>
 
 enum waveshapes {
     kSine,
@@ -44,6 +45,7 @@ class OSC{
   public:
     
     OSC();
+    ~OSC();
     
     float process(); //will output the next LFO value in the range +/-depth
     
@@ -85,16 +87,16 @@ class Master : public OSC{
 class Harmonic : public OSC{
 
   public: 
-    Harmonic(OSC * master, int offset, double fs);
+    Harmonic();
 
-    // void init(OSC * master, int offset);
+    void init(int offset, double fs);
 
     void setHarmonicOffset(int offset);
-    void update();
+    void updateNote(int midiNote);
     int getOffset();
 
   private:
-    OSC * m_master;
+    std::unique_ptr<Master> m_master;
 
     int m_offset;
 };

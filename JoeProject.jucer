@@ -6,6 +6,10 @@
               pluginCharacteristicsValue="pluginWantsMidiIn">
   <MAINGROUP id="shkZ2M" name="JoeProject">
     <GROUP id="{4A1D2EE2-B4CD-F0BC-17CD-3D2BEFEE41B5}" name="Source">
+      <FILE id="h9wvA5" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
+      <FILE id="oQrSUf" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
+      <FILE id="ZDxVLa" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
+      <FILE id="sM59xE" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
       <FILE id="OuzX6C" name="ADSR.cpp" compile="1" resource="0" file="Source/ADSR.cpp"/>
       <FILE id="lus13I" name="ADSR.h" compile="0" resource="0" file="Source/ADSR.h"/>
       <FILE id="MI9Bv6" name="Pan.cpp" compile="1" resource="0" file="Source/Pan.cpp"/>

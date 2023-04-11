@@ -8,11 +8,13 @@
 
 #include "OSC.h"
 #include <math.h>
-#include <iostream>
 #define PI 3.141592654
 
-OSC::OSC()
+OSC::OSC(){}
+
+OSC::~OSC()
 {
+    delete env;
 }
 
 float OSC::process()
@@ -143,7 +145,9 @@ Master::Master(double fs){
 
 //Harmonic defs
 
-Harmonic::Harmonic(OSC * master, int offset, double fs){
+
+
+Harmonic::Harmonic(){
     //defaults
     setMidiNote(69);
     m_depth = 0.0;
@@ -153,29 +157,27 @@ Harmonic::Harmonic(OSC * master, int offset, double fs){
 
     reset();
 
-    setFS(fs);
-
     //unique
-    m_master = master;
-    m_offset = offset;
     m_depthCoef = 0.0;
+}
 
-    update();
+void Harmonic::init(int offset, double fs){
+    setFS(fs);
+    setHarmonicOffset(offset);
 }
 
 //takes offset in semi tones (midi val) and sets midi note + freq val
 void Harmonic::setHarmonicOffset(int offset){
     m_offset = offset;
 
-    update();
+    setMidiNote(m_midiNote + m_offset);
 }
 
 int Harmonic::getOffset(){
     return m_offset;
 }
 
-void Harmonic::update(){
-    m_midiNote = m_master->getMidiNote() + m_offset;
+void Harmonic::updateNote(int midiNote){
     
-    setMidiNote(m_midiNote);
+    setMidiNote(midiNote + m_offset);
 }
