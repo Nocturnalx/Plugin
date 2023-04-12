@@ -56,6 +56,14 @@ void JoeProjectAudioProcessorEditor::repaintSelectButtons(std::unique_ptr<juce::
 
     newButton->setColour(0x1000100, juce::Colours::red);
 }
+
+void JoeProjectAudioProcessorEditor::repaintDelayButtons(std::unique_ptr<juce::TextButton> & newButton){
+    tap1_selectButton->setColour(0x1000100, juce::Colour());
+    tap2_selectButton->setColour(0x1000100, juce::Colour());
+    tap3_selectButton->setColour(0x1000100, juce::Colour());
+
+    newButton->setColour(0x1000100, juce::Colours::red);
+}
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -66,7 +74,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     //[/Constructor_pre]
 
     effects_group.reset (new juce::GroupComponent ("effects group",
-                                                   TRANS("Effects")));
+                                                   TRANS("Delay")));
     addAndMakeVisible (effects_group.get());
 
     effects_group->setBounds (552, 0, 298, 192);
@@ -500,6 +508,115 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
     time_label2->setBounds (360, 48, 55, 24);
 
+    tap1_selectButton.reset (new juce::TextButton ("tap select"));
+    addAndMakeVisible (tap1_selectButton.get());
+    tap1_selectButton->setButtonText (TRANS("tap1"));
+    tap1_selectButton->addListener (this);
+
+    tap1_selectButton->setBounds (568, 136, 48, 24);
+
+    tap2_selectButton.reset (new juce::TextButton ("tap select"));
+    addAndMakeVisible (tap2_selectButton.get());
+    tap2_selectButton->setButtonText (TRANS("tap2"));
+    tap2_selectButton->addListener (this);
+
+    tap2_selectButton->setBounds (624, 136, 48, 24);
+
+    tap3_selectButton.reset (new juce::TextButton ("tap select"));
+    addAndMakeVisible (tap3_selectButton.get());
+    tap3_selectButton->setButtonText (TRANS("tap3"));
+    tap3_selectButton->addListener (this);
+
+    tap3_selectButton->setBounds (680, 136, 48, 24);
+
+    tap_feedforwardSlider.reset (new juce::Slider ("feedforward slider"));
+    addAndMakeVisible (tap_feedforwardSlider.get());
+    tap_feedforwardSlider->setRange (0, 1, 0);
+    tap_feedforwardSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    tap_feedforwardSlider->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 20);
+    tap_feedforwardSlider->addListener (this);
+
+    tap_feedforwardSlider->setBounds (680, 56, 48, 72);
+
+    tap_delaySlider.reset (new juce::Slider ("delay slider"));
+    addAndMakeVisible (tap_delaySlider.get());
+    tap_delaySlider->setRange (0, 2, 0);
+    tap_delaySlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    tap_delaySlider->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 20);
+    tap_delaySlider->addListener (this);
+
+    tap_delaySlider->setBounds (568, 56, 48, 72);
+
+    tap_feedbackSlider.reset (new juce::Slider ("feedback slider"));
+    addAndMakeVisible (tap_feedbackSlider.get());
+    tap_feedbackSlider->setRange (0, 1, 0);
+    tap_feedbackSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    tap_feedbackSlider->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 20);
+    tap_feedbackSlider->addListener (this);
+
+    tap_feedbackSlider->setBounds (624, 56, 48, 72);
+
+    feedback_label.reset (new juce::Label ("label",
+                                           TRANS("FB")));
+    addAndMakeVisible (feedback_label.get());
+    feedback_label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    feedback_label->setJustificationType (juce::Justification::centredLeft);
+    feedback_label->setEditable (false, false, false);
+    feedback_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    feedback_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    feedback_label->setBounds (632, 40, 32, 24);
+
+    feedforward_label.reset (new juce::Label ("label",
+                                              TRANS("FF")));
+    addAndMakeVisible (feedforward_label.get());
+    feedforward_label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    feedforward_label->setJustificationType (juce::Justification::centredLeft);
+    feedforward_label->setEditable (false, false, false);
+    feedforward_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    feedforward_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    feedforward_label->setBounds (680, 40, 32, 24);
+
+    delay_label.reset (new juce::Label ("label",
+                                        TRANS("Delay (S)")));
+    addAndMakeVisible (delay_label.get());
+    delay_label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    delay_label->setJustificationType (juce::Justification::centredLeft);
+    delay_label->setEditable (false, false, false);
+    delay_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    delay_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    delay_label->setBounds (560, 40, 56, 24);
+
+    delay_wetSlider.reset (new juce::Slider ("wet slider"));
+    addAndMakeVisible (delay_wetSlider.get());
+    delay_wetSlider->setRange (0, 1, 0);
+    delay_wetSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    delay_wetSlider->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    delay_wetSlider->addListener (this);
+
+    delay_wetSlider->setBounds (792, 120, 48, 48);
+
+    wetslider_label.reset (new juce::Label ("label",
+                                            TRANS("Wet")));
+    addAndMakeVisible (wetslider_label.get());
+    wetslider_label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    wetslider_label->setJustificationType (juce::Justification::centredLeft);
+    wetslider_label->setEditable (false, false, false);
+    wetslider_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    wetslider_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    wetslider_label->setBounds (768, 136, 32, 24);
+
+    delay_onOffButton.reset (new juce::ToggleButton ("on off button"));
+    addAndMakeVisible (delay_onOffButton.get());
+    delay_onOffButton->setButtonText (TRANS("On/Off"));
+    delay_onOffButton->addListener (this);
+    delay_onOffButton->setToggleState (true, juce::dontSendNotification);
+
+    delay_onOffButton->setBounds (768, 16, 72, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -512,6 +629,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     //these all just set GUI values to their defaults on launch
     m_depthSlider->setValue(1);
     m_gainSlider->setValue(1);
+    delay_wetSlider->setValue(1);
 
     m_attackSlider->setValue(audioProcessor.getOscADSR(kAttack));
     m_decaySlider->setValue(audioProcessor.getOscADSR(kDecay));
@@ -521,6 +639,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
     m_sineButton->triggerClick();
     harm1_selectButton->triggerClick();
+    tap1_selectButton->triggerClick();
     //[/Constructor]
 }
 
@@ -578,6 +697,18 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
     sustainHeight_label2 = nullptr;
     time_label = nullptr;
     time_label2 = nullptr;
+    tap1_selectButton = nullptr;
+    tap2_selectButton = nullptr;
+    tap3_selectButton = nullptr;
+    tap_feedforwardSlider = nullptr;
+    tap_delaySlider = nullptr;
+    tap_feedbackSlider = nullptr;
+    feedback_label = nullptr;
+    feedforward_label = nullptr;
+    delay_label = nullptr;
+    delay_wetSlider = nullptr;
+    wetslider_label = nullptr;
+    delay_onOffButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -718,6 +849,30 @@ void JoeProjectAudioProcessorEditor::sliderValueChanged (juce::Slider* sliderTha
         audioProcessor.updateHarmParameters(kADSR, kSustainHeight, harm_sustainHeightSlider->getValue());
         //[/UserSliderCode_harm_sustainHeightSlider]
     }
+    else if (sliderThatWasMoved == tap_feedforwardSlider.get())
+    {
+        //[UserSliderCode_tap_feedforwardSlider] -- add your slider handling code here..
+        audioProcessor.updateDelayParameters(kFeedforward, tap_feedforwardSlider->getValue());
+        //[/UserSliderCode_tap_feedforwardSlider]
+    }
+    else if (sliderThatWasMoved == tap_delaySlider.get())
+    {
+        //[UserSliderCode_tap_delaySlider] -- add your slider handling code here..
+        audioProcessor.updateDelayParameters(kDelayTime, tap_delaySlider->getValue());
+        //[/UserSliderCode_tap_delaySlider]
+    }
+    else if (sliderThatWasMoved == tap_feedbackSlider.get())
+    {
+        //[UserSliderCode_tap_feedbackSlider] -- add your slider handling code here..
+        audioProcessor.updateDelayParameters(kFeedback, tap_feedforwardSlider->getValue());
+        //[/UserSliderCode_tap_feedbackSlider]
+    }
+    else if (sliderThatWasMoved == delay_wetSlider.get())
+    {
+        //[UserSliderCode_delay_wetSlider] -- add your slider handling code here..
+        audioProcessor.updateDelayParameters(kWetness, delay_wetSlider->getValue());
+        //[/UserSliderCode_delay_wetSlider]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -797,7 +952,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintHarmWfButtons(harmWaveformArr[audioProcessor.getSelectedHarm()]);
 
         //set offset slider
-        harm_offsetSlider->setValue(audioProcessor.getHarmOffset(harm1));
+        harm_offsetSlider->setValue(audioProcessor.getHarmOffset());
 
         //set ADSR
         harm_attackSlider->setValue(audioProcessor.getOscADSR(kAttack, harm1));
@@ -816,7 +971,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintHarmWfButtons(harmWaveformArr[audioProcessor.getSelectedHarm()]);
 
         //set offset slider
-        harm_offsetSlider->setValue(audioProcessor.getHarmOffset(harm2));
+        harm_offsetSlider->setValue(audioProcessor.getHarmOffset());
 
         //set ADSR
         harm_attackSlider->setValue(audioProcessor.getOscADSR(kAttack, harm2));
@@ -835,7 +990,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintHarmWfButtons(harmWaveformArr[audioProcessor.getSelectedHarm()]);
 
         //set offset slider
-        harm_offsetSlider->setValue(audioProcessor.getHarmOffset(harm3));
+        harm_offsetSlider->setValue(audioProcessor.getHarmOffset());
 
         //set ADSR
         harm_attackSlider->setValue(audioProcessor.getOscADSR(kAttack, harm3));
@@ -854,7 +1009,7 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         repaintHarmWfButtons(harmWaveformArr[audioProcessor.getSelectedHarm()]);
 
         //set offset slider
-        harm_offsetSlider->setValue(audioProcessor.getHarmOffset(harm4));
+        harm_offsetSlider->setValue(audioProcessor.getHarmOffset());
 
         //set ADSR
         harm_attackSlider->setValue(audioProcessor.getOscADSR(kAttack, harm4));
@@ -863,6 +1018,48 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         harm_sustainHeightSlider->setValue(audioProcessor.getOscADSR(kSustainHeight, harm4));
         harm_releaseSlider->setValue(audioProcessor.getOscADSR(kRelease, harm4));
         //[/UserButtonCode_harm4_selectButton]
+    }
+    else if (buttonThatWasClicked == tap1_selectButton.get())
+    {
+        //[UserButtonCode_tap1_selectButton] -- add your button handler code here..
+        audioProcessor.setTap(Tap1);
+
+        repaintDelayButtons(tap1_selectButton);
+
+        tap_delaySlider->setValue(audioProcessor.getDelay());
+        tap_feedbackSlider->setValue(audioProcessor.getFeedback());
+        tap_feedforwardSlider->setValue(audioProcessor.getFeedforward());
+        //[/UserButtonCode_tap1_selectButton]
+    }
+    else if (buttonThatWasClicked == tap2_selectButton.get())
+    {
+        //[UserButtonCode_tap2_selectButton] -- add your button handler code here..
+        audioProcessor.setTap(Tap2);
+
+        repaintDelayButtons(tap2_selectButton);
+
+        tap_delaySlider->setValue(audioProcessor.getDelay());
+        tap_feedbackSlider->setValue(audioProcessor.getFeedback());
+        tap_feedforwardSlider->setValue(audioProcessor.getFeedforward());
+        //[/UserButtonCode_tap2_selectButton]
+    }
+    else if (buttonThatWasClicked == tap3_selectButton.get())
+    {
+        //[UserButtonCode_tap3_selectButton] -- add your button handler code here..
+        audioProcessor.setTap(Tap3);
+
+        repaintDelayButtons(tap3_selectButton);
+
+        tap_delaySlider->setValue(audioProcessor.getDelay());
+        tap_feedbackSlider->setValue(audioProcessor.getFeedback());
+        tap_feedforwardSlider->setValue(audioProcessor.getFeedforward());
+        //[/UserButtonCode_tap3_selectButton]
+    }
+    else if (buttonThatWasClicked == delay_onOffButton.get())
+    {
+        //[UserButtonCode_delay_onOffButton] -- add your button handler code here..
+        audioProcessor.toggleOnOff();
+        //[/UserButtonCode_delay_onOffButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -891,7 +1088,7 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="1000" initialHeight="200">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GROUPCOMPONENT name="effects group" id="a1843f4e14437c21" memberName="effects_group"
-                  virtualName="" explicitFocusOrder="0" pos="552 0 298 192" title="Effects"/>
+                  virtualName="" explicitFocusOrder="0" pos="552 0 298 192" title="Delay"/>
   <GROUPCOMPONENT name="effects group" id="a352b916ecb48379" memberName="effects_group2"
                   virtualName="" explicitFocusOrder="0" pos="850 0 150 192" title="Mix"/>
   <GROUPCOMPONENT name="master group" id="25f270b0cd5b75bf" memberName="master_group"
@@ -1099,6 +1296,58 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="Time S:" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
+  <TEXTBUTTON name="tap select" id="81a041a42e18bdf2" memberName="tap1_selectButton"
+              virtualName="" explicitFocusOrder="0" pos="568 136 48 24" buttonText="tap1"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="tap select" id="676127b344d32cd3" memberName="tap2_selectButton"
+              virtualName="" explicitFocusOrder="0" pos="624 136 48 24" buttonText="tap2"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="tap select" id="6b09ba0b0463da3f" memberName="tap3_selectButton"
+              virtualName="" explicitFocusOrder="0" pos="680 136 48 24" buttonText="tap3"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <SLIDER name="feedforward slider" id="75c82d5aa87a25ab" memberName="tap_feedforwardSlider"
+          virtualName="" explicitFocusOrder="0" pos="680 56 48 72" min="0.0"
+          max="1.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="delay slider" id="4958f62b588b84b" memberName="tap_delaySlider"
+          virtualName="" explicitFocusOrder="0" pos="568 56 48 72" min="0.0"
+          max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="feedback slider" id="f89525c08744359" memberName="tap_feedbackSlider"
+          virtualName="" explicitFocusOrder="0" pos="624 56 48 72" min="0.0"
+          max="1.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <LABEL name="label" id="7482b4f8b524d286" memberName="feedback_label"
+         virtualName="" explicitFocusOrder="0" pos="632 40 32 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="FB" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="label" id="147a6185c5d0c155" memberName="feedforward_label"
+         virtualName="" explicitFocusOrder="0" pos="680 40 32 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="FF" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="label" id="f776de19fb4985c4" memberName="delay_label" virtualName=""
+         explicitFocusOrder="0" pos="560 40 56 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Delay (S)" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <SLIDER name="wet slider" id="b349d9cbd1e8ca97" memberName="delay_wetSlider"
+          virtualName="" explicitFocusOrder="0" pos="792 120 48 48" min="0.0"
+          max="1.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <LABEL name="label" id="d0e04177f0d6ec03" memberName="wetslider_label"
+         virtualName="" explicitFocusOrder="0" pos="768 136 32 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Wet" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <TOGGLEBUTTON name="on off button" id="4969d8c8f9de487d" memberName="delay_onOffButton"
+                virtualName="" explicitFocusOrder="0" pos="768 16 72 24" buttonText="On/Off"
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -48,6 +48,7 @@ public:
     void repaintWfButtons(std::unique_ptr<juce::TextButton> & newButton);
     void repaintHarmWfButtons(int harmWaveform);
     void repaintSelectButtons(std::unique_ptr<juce::TextButton> & newButton);
+    void repaintDelayButtons(std::unique_ptr<juce::TextButton> & newButton);
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -114,6 +115,18 @@ private:
     std::unique_ptr<juce::Label> sustainHeight_label2;
     std::unique_ptr<juce::Label> time_label;
     std::unique_ptr<juce::Label> time_label2;
+    std::unique_ptr<juce::TextButton> tap1_selectButton;
+    std::unique_ptr<juce::TextButton> tap2_selectButton;
+    std::unique_ptr<juce::TextButton> tap3_selectButton;
+    std::unique_ptr<juce::Slider> tap_feedforwardSlider;
+    std::unique_ptr<juce::Slider> tap_delaySlider;
+    std::unique_ptr<juce::Slider> tap_feedbackSlider;
+    std::unique_ptr<juce::Label> feedback_label;
+    std::unique_ptr<juce::Label> feedforward_label;
+    std::unique_ptr<juce::Label> delay_label;
+    std::unique_ptr<juce::Slider> delay_wetSlider;
+    std::unique_ptr<juce::Label> wetslider_label;
+    std::unique_ptr<juce::ToggleButton> delay_onOffButton;
 
 
     //==============================================================================

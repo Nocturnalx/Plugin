@@ -12,6 +12,9 @@
 Delay::Delay(double fs){
   m_sampleRate = fs;
 
+  m_wetness = 1;
+  m_isOn = true;
+
   tapCnt = 3;
   tapArr = std::unique_ptr <DelayLine []>(new DelayLine[tapCnt]);
 
@@ -39,8 +42,48 @@ Delay::~Delay(){
 
 
 float Delay::process(float samp){
-  float out = tapArr[0].process(samp) + tapArr[1].process(samp) + tapArr[2].process(samp);
+  if (m_isOn){
+    float wetSamp = ((tapArr[0].process(samp) + tapArr[1].process(samp) + tapArr[2].process(samp))/3);
+    
+    float out = ((1-m_wetness) * samp) + (m_wetness * wetSamp);
+    return out;
+  }
 
-  return out;
+  return samp;
 }
 
+
+void Delay::setFeedforward(int tap, float feedforward){
+  tapArr[tap].setFeedforward(feedforward);
+}
+void Delay::setFeedback(int tap, float feedback){
+  tapArr[tap].setFeedback(feedback);
+}
+void Delay::setDelay(int tap, float delay){
+  tapArr[tap].setDelay(delay);
+}
+
+void Delay::setWetness(float wetness){
+  m_wetness = wetness;
+}
+
+
+float Delay::getFeedforward(int tap){
+  return tapArr[tap].getFeedforward();
+}
+
+float Delay::getFeedback(int tap){
+  return tapArr[tap].getFeedback();
+}
+
+float Delay::getDelay(int tap){
+  return tapArr[tap].getDelay();
+}
+
+float Delay::getWetness(){
+  return m_wetness;
+}
+
+void Delay::toggleOnOff(){
+  m_isOn = !m_isOn;
+}

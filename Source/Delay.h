@@ -13,6 +13,13 @@
 #include "DelayLine.h"
 #include <memory>
 
+enum delayParams{
+  kFeedback,
+  kFeedforward,
+  kDelayTime,
+  kWetness
+};
+
 class Delay{
   public:
     Delay(double fs);
@@ -20,13 +27,28 @@ class Delay{
 
     float process(float samp);
 
-    //set functions 
+    //set functions
+
+    void setFeedforward(int tap, float feedforward);
+    void setFeedback(int tap, float feedback);
+    void setDelay(int tap, float delay);
+    void setWetness(float wetness);
 
     //get functions
 
-  private:
-  std::unique_ptr <DelayLine []> tapArr;
-  int tapCnt;
+    float getFeedforward(int tap);
+    float getFeedback(int tap);
+    float getDelay(int tap);
+    float getWetness();
 
-  double m_sampleRate;
+    void toggleOnOff();
+
+  private:
+    std::unique_ptr <DelayLine []> tapArr;
+    int tapCnt;
+
+    char m_isOn;
+
+    double m_sampleRate;
+    float m_wetness;
 };

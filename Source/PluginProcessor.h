@@ -21,7 +21,8 @@ enum parameters{
   kWaveform,
   kPan,
   kOffset,
-  kADSR
+  kADSR,
+  kDelay
 };
 
 enum ADSRParams{
@@ -37,6 +38,12 @@ enum harmonics{
   harm2,
   harm3,
   harm4
+};
+
+enum taps{
+  Tap1,
+  Tap2,
+  Tap3
 };
 
 //==============================================================================
@@ -94,12 +101,22 @@ public:
     void updateHarmParameters(parameters param, ADSRParams param2, float value);
     void updateHarmParameters(harmonics harm, parameters param, float value);
 
+    void updateDelayParameters(delayParams delayParam, float value);
+
     float getOscADSR(ADSRParams param);
     float getOscADSR(ADSRParams param, harmonics harm);
 
     int getSelectedHarm();
     void setHarm(harmonics harm);
-    int getHarmOffset(harmonics harm);
+    int getHarmOffset();
+
+    void setTap(taps tap);
+    int getSelectedTap();
+
+    float getDelay();
+    float getFeedback();
+    float getFeedforward();
+    void toggleOnOff();
 
 private:
     std::unique_ptr<Gain> m_GainInstance;
@@ -111,6 +128,8 @@ private:
 
     int harmCnt;
     int selectedHarm;
+
+    int selectedTap;
 
     float midiPitchBend;
     int midiNotenumber;

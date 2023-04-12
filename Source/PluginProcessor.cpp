@@ -87,8 +87,6 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     m_PanInstance = std::unique_ptr<Pan>(new Pan);
 
-    m_DelayInstance = std::unique_ptr<Delay>(new Delay(sampleRate));
-
     m_OSCMaster = std::unique_ptr<Master>(new Master(sampleRate));
 
     harmCnt = 4;
@@ -96,10 +94,13 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     harmArr = std::unique_ptr <Harmonic []>(new Harmonic[harmCnt]);
         
-    harmArr[0].init(4, sampleRate);
+    harmArr[0].init(5, sampleRate);
     harmArr[1].init(7, sampleRate);
     harmArr[2].init(10, sampleRate);
-    harmArr[3].init(11, sampleRate);
+    harmArr[3].init(12, sampleRate);
+
+    selectedTap = 0;
+    m_DelayInstance = std::unique_ptr<Delay>(new Delay(sampleRate));
 }
 
 void JoeProjectAudioProcessor::releaseResources(){
@@ -244,6 +245,8 @@ void JoeProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
     // whose contents will have been created by the getStateInformation() call.
 }
 
+//this whole section below needs fixing
+
 //global gain, pan etc. and master osc control
 void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, float value){
 
@@ -270,7 +273,7 @@ void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, waveshap
     }
 }
 
-//overload for two specifiers and a value (ADSR)
+//overload for two specifiers and a value (ADSR, delay)
 void JoeProjectAudioProcessor::updateGlobalParameters(parameters param, ADSRParams param2, float value){
 
     if (param == kADSR){
@@ -337,6 +340,25 @@ void JoeProjectAudioProcessor::updateHarmParameters(parameters param, ADSRParams
     }
 }
 
+void JoeProjectAudioProcessor::updateDelayParameters(delayParams delayParam, float value){
+    if (delayParam == kDelayTime){
+        m_DelayInstance->setDelay(selectedTap, value);    
+    }
+
+    if (delayParam == kFeedback){
+        m_DelayInstance->setFeedback(selectedTap, value);
+    }
+
+    if (delayParam == kFeedforward){
+        m_DelayInstance->setFeedforward(selectedTap, value);
+    }
+
+    if (delayParam == kWetness){
+        m_DelayInstance->setWetness(value);
+    }
+}
+
+
 //returns ADSR info for master osc
 float JoeProjectAudioProcessor::getOscADSR(ADSRParams param){
     if (param == kAttack){
@@ -358,6 +380,7 @@ float JoeProjectAudioProcessor::getOscADSR(ADSRParams param){
     return -1;
 }
 
+//returns ADSR info for given harmonic
 float JoeProjectAudioProcessor::getOscADSR(ADSRParams param, harmonics harm){
     if (param == kAttack){
         return harmArr[harm].env->getAttack();
@@ -378,6 +401,7 @@ float JoeProjectAudioProcessor::getOscADSR(ADSRParams param, harmonics harm){
     return -1;
 }
 
+
 //sets active harmonic class instance
 void JoeProjectAudioProcessor::setHarm(harmonics harm){
     selectedHarm = harm;
@@ -387,11 +411,35 @@ int JoeProjectAudioProcessor::getSelectedHarm(){
     return selectedHarm;
 }
 
-//gets harmonic class instance using index
-int JoeProjectAudioProcessor::getHarmOffset(harmonics harm){
-    return harmArr[harm].getOffset();
+//gets offset from given harm no.
+int JoeProjectAudioProcessor::getHarmOffset(){
+    return harmArr[selectedHarm].getOffset();
 }
 
+
+void JoeProjectAudioProcessor::setTap(taps tap){
+    selectedTap = tap;
+}
+
+int JoeProjectAudioProcessor::getSelectedTap(){
+    return selectedTap;
+}
+
+float JoeProjectAudioProcessor::getDelay(){
+    return m_DelayInstance->getDelay(selectedTap);
+}
+
+float JoeProjectAudioProcessor::getFeedback(){
+    return m_DelayInstance->getFeedback(selectedTap);
+}
+
+float JoeProjectAudioProcessor::getFeedforward(){
+    return m_DelayInstance->getFeedforward(selectedTap);
+}
+
+void JoeProjectAudioProcessor::toggleOnOff(){
+    m_DelayInstance->toggleOnOff();
+}
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter(){
