@@ -10,9 +10,9 @@
 
 #include "Gain.h"
 
-Gain::Gain()
+Gain::Gain(juce::AudioProcessorValueTreeState * treeState)
 {
-  m_gain = 1;
+  m_gain = *treeState->getRawParameterValue("gain");
 }
 
 Gain::~Gain()

@@ -33,13 +33,7 @@
 
 #include "ADSR.h"
 #include <memory>
-
-enum waveshapes {
-    kSine,
-    kTriangle,
-    kSaw,
-    kSquare
-};
+#include <JuceHeader.h>
 
 class OSC{
   public:
@@ -56,7 +50,7 @@ class OSC{
     void setFS(double fs);
     
     int getMidiNote();
-    waveshapes getWaveshape();
+    int getWaveshape();
     
     void reset();
 
@@ -76,12 +70,12 @@ class OSC{
     float  m_depth;
     float m_depthCoef;
     int m_midiNote;
-    waveshapes m_shape;
+    int m_shape;
 };
 
 class Master : public OSC{
   public:
-    Master(double fs);
+    Master(double fs, juce::AudioProcessorValueTreeState * treeState);
 };
 
 class Harmonic : public OSC{
@@ -89,7 +83,7 @@ class Harmonic : public OSC{
   public: 
     Harmonic();
 
-    void init(int offset, double fs);
+    void init(int offset, int waveform, double fs);
 
     void setHarmonicOffset(int offset);
     void updateNote(int midiNote);

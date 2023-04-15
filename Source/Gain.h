@@ -8,11 +8,13 @@
   ==============================================================================
 */
 
+#include <JuceHeader.h>
+
 #pragma once
 class Gain{
 	
 public:
-	Gain();
+	Gain(juce::AudioProcessorValueTreeState * treeState);
 	~Gain();
 
 	void setGain(float gain);

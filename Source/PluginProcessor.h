@@ -16,21 +16,35 @@
 #include <math.h>
 
 enum parameters{
+  //global
   kGain,
-  kDepth,
-  kWaveform,
   kPan,
-  kOffset,
-  kADSR,
-  kDelay
-};
 
-enum ADSRParams{
+  //osc params
+  kDepthCoef,
+  kWaveform,
+  kOffset,
+
+  //ADSR params
   kAttack,
   kDecay,
   kSustain,
   kSustainHeight,
-  kRelease
+  kRelease,
+  
+  //delay params
+  kFeedback,
+  kFeedforward,
+  kDelayTime,
+  kDelayOnOff,
+  kWetness
+};
+
+enum waveshapes {
+  kSine,
+  kTriangle,
+  kSaw,
+  kSquare
 };
 
 enum harmonics{
@@ -41,9 +55,9 @@ enum harmonics{
 };
 
 enum taps{
-  Tap1,
-  Tap2,
-  Tap3
+  tap1,
+  tap2,
+  tap3
 };
 
 //==============================================================================
@@ -92,19 +106,19 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void updateGlobalParameters(parameters param, waveshapes value);
-    void updateGlobalParameters(parameters param, float value);
-    void updateGlobalParameters(parameters param, ADSRParams param2, float value);
+    // void updateGlobalParameters(parameters param, waveshapes value);
+    void updateGlobalParameters(int param, float value);
+    // void updateGlobalParameters(parameters param, parameters param2, float value);
 
-    void updateHarmParameters(parameters param, float value);
-    void updateHarmParameters(parameters param, waveshapes value);
-    void updateHarmParameters(parameters param, ADSRParams param2, float value);
-    void updateHarmParameters(harmonics harm, parameters param, float value);
+    void updateHarmParameters(int param, float value);
+    // void updateHarmParameters(parameters param, waveshapes value);
+    // void updateHarmParameters(parameters param, parameters param2, float value);
+    void updateHarmParameters(int harm, int param, float value);
 
-    void updateDelayParameters(delayParams delayParam, float value);
+    void updateDelayParameters(int tap, int delayParam, float value);
 
-    float getOscADSR(ADSRParams param);
-    float getOscADSR(ADSRParams param, harmonics harm);
+    float getOscADSR(parameters param);
+    float getOscADSR(parameters param, harmonics harm);
 
     int getSelectedHarm();
     void setHarm(harmonics harm);
@@ -116,7 +130,12 @@ public:
     float getDelay();
     float getFeedback();
     float getFeedforward();
-    void toggleOnOff();
+    void toggleOnOff(parameters param);
+
+    juce::AudioProcessorValueTreeState treeState;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    
 
 private:
     std::unique_ptr<Gain> m_GainInstance;
@@ -124,7 +143,7 @@ private:
     std::unique_ptr<Delay> m_DelayInstance;
 
     std::unique_ptr<Master> m_OSCMaster;
-    std::unique_ptr <Harmonic []> harmArr;
+    std::unique_ptr<Harmonic []> harmArr;
 
     int harmCnt;
     int selectedHarm;

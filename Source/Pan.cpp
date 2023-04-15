@@ -12,9 +12,9 @@
 #include <math.h>
 #define PI 3.141592654
 
-Pan::Pan()
+Pan::Pan(juce::AudioProcessorValueTreeState * treeState)
 {
-  m_pan = 0;
+  m_pan = *treeState->getRawParameterValue("pan");
 }
 
 Pan::~Pan()
@@ -39,13 +39,13 @@ void Pan::initialise(float pan)
 
 void Pan::process(float &leftSample, float &rightSample)
 {
-    float pCoeff;
-    float leftGain;
-    float rightGain;
-    
-    pCoeff = (PI * (m_pan + 1))/4;
-    leftGain = cos(pCoeff);
-    rightGain = sin(pCoeff);
-	leftSample = leftSample * leftGain;
-	rightSample = rightSample * rightGain;
+  float pCoeff;
+  float leftGain;
+  float rightGain;
+  
+  pCoeff = (PI * (m_pan + 1))/4;
+  leftGain = cos(pCoeff);
+  rightGain = sin(pCoeff);
+  leftSample = leftSample * leftGain;
+  rightSample = rightSample * rightGain;
 }

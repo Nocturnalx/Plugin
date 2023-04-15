@@ -8,6 +8,7 @@
 
 #include "OSC.h"
 #include <math.h>
+#include "PluginProcessor.h"
 #define PI 3.141592654
 
 OSC::OSC(){}
@@ -72,7 +73,7 @@ void OSC::setDepth(float depth){
 }
 
 void OSC::setWaveshape(int shape){
-    m_shape = (waveshapes)shape;
+    m_shape = shape;
     reset();
 }
 
@@ -93,7 +94,7 @@ void OSC::setFS(double fs){
 //do we need any of these gets??
 
 //gets current waveshape, used for painting
-waveshapes OSC::getWaveshape(){
+int OSC::getWaveshape(){
     return m_shape;
 }
 
@@ -127,11 +128,10 @@ double OSC::renderTriangle(double phase)
 
 
 //master defs
-Master::Master(double fs){
+Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
     //defaults
     setMidiNote(69);
     m_depth = 0.0;
-    m_shape = kSine;
 
     env = new ADSR;
 
@@ -140,7 +140,9 @@ Master::Master(double fs){
     setFS(fs);
 
     //unique
-    m_depthCoef = 1.0;
+    int ws = *treeState->getRawParameterValue("master_waveform");
+    m_shape = (waveshapes)ws;
+    m_depthCoef = *treeState->getRawParameterValue("master_depth_coef");
 }
 
 //Harmonic defs
@@ -161,9 +163,10 @@ Harmonic::Harmonic(){
     m_depthCoef = 0.0;
 }
 
-void Harmonic::init(int offset, double fs){
+void Harmonic::init(int offset, int waveform, double fs){
     setFS(fs);
     setHarmonicOffset(offset);
+    setWaveshape(waveform);
 }
 
 //takes offset in semi tones (midi val) and sets midi note + freq val

@@ -8,11 +8,13 @@
   ==============================================================================
 */
 
+#include <JuceHeader.h>
+
 #pragma once
 class Pan
 {
 public:
-	Pan();
+	Pan(juce::AudioProcessorValueTreeState * treeState);
 	~Pan();
 
 	void setPan(float gain);

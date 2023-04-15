@@ -9,11 +9,11 @@
 */
 
 #include "Delay.h"
-Delay::Delay(double fs){
+Delay::Delay(double fs, juce::AudioProcessorValueTreeState * treeState){
   m_sampleRate = fs;
 
-  m_wetness = 1;
-  m_isOn = true;
+  m_wetness = *treeState->getRawParameterValue("delay_wetness");
+  m_isOn = *treeState->getRawParameterValue("delay_toggle");
 
   tapCnt = 3;
   tapArr = std::unique_ptr <DelayLine []>(new DelayLine[tapCnt]);
@@ -22,17 +22,17 @@ Delay::Delay(double fs){
     tapArr[i].init(fs, 2);
   }
 
-  tapArr[0].setFeedback(0.5);
-  tapArr[0].setFeedforward(0.5);
-  tapArr[0].setDelay(0.1);
-  
-  tapArr[1].setFeedback(0.4);
-  tapArr[1].setFeedforward(0.4);
-  tapArr[1].setDelay(0.2);
-  
-  tapArr[2].setFeedback(0.3);
-  tapArr[2].setFeedforward(0.3);
-  tapArr[2].setDelay(0.5);
+  tapArr[0].setFeedback(*treeState->getRawParameterValue("tap1_feedback"));
+  tapArr[0].setFeedforward(*treeState->getRawParameterValue("tap1_feedforward"));
+  tapArr[0].setDelay(*treeState->getRawParameterValue("tap1_delay_time"));
+
+  tapArr[1].setFeedback(*treeState->getRawParameterValue("tap2_feedback"));
+  tapArr[1].setFeedforward(*treeState->getRawParameterValue("tap2_feedforward"));
+  tapArr[1].setDelay(*treeState->getRawParameterValue("tap2_delay_time"));
+
+  tapArr[2].setFeedback(*treeState->getRawParameterValue("tap3_feedback"));
+  tapArr[2].setFeedforward(*treeState->getRawParameterValue("tap3_feedforward"));
+  tapArr[2].setDelay(*treeState->getRawParameterValue("tap3_delay_time"));
 
 }
 

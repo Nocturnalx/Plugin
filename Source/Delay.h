@@ -12,17 +12,11 @@
 
 #include "DelayLine.h"
 #include <memory>
-
-enum delayParams{
-  kFeedback,
-  kFeedforward,
-  kDelayTime,
-  kWetness
-};
+#include <JuceHeader.h>
 
 class Delay{
   public:
-    Delay(double fs);
+    Delay(double fs, juce::AudioProcessorValueTreeState * treeState);
     ~Delay();
 
     float process(float samp);
