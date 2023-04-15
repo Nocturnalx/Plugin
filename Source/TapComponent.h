@@ -71,6 +71,9 @@ private:
     std::unique_ptr<juce::Slider> tap_feedbackSlider;
     std::unique_ptr<juce::Slider> tap_feedforwardSlider;
     std::unique_ptr<juce::Slider> tap_delaySlider;
+    std::unique_ptr<juce::Label> juce__label;
+    std::unique_ptr<juce::Label> juce__label2;
+    std::unique_ptr<juce::Label> juce__label3;
 
 
     //==============================================================================

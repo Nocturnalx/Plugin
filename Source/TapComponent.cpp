@@ -61,6 +61,39 @@ TapComponent::TapComponent (JoeProjectAudioProcessor &owner, int tap)
 
     tap_delaySlider->setBounds (120, 24, 56, 72);
 
+    juce__label.reset (new juce::Label ("new label",
+                                        TRANS("FB")));
+    addAndMakeVisible (juce__label.get());
+    juce__label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    juce__label->setJustificationType (juce::Justification::centredLeft);
+    juce__label->setEditable (false, false, false);
+    juce__label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    juce__label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    juce__label->setBounds (16, 8, 31, 24);
+
+    juce__label2.reset (new juce::Label ("new label",
+                                         TRANS("FF")));
+    addAndMakeVisible (juce__label2.get());
+    juce__label2->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    juce__label2->setJustificationType (juce::Justification::centredLeft);
+    juce__label2->setEditable (false, false, false);
+    juce__label2->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    juce__label2->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    juce__label2->setBounds (72, 8, 31, 24);
+
+    juce__label3.reset (new juce::Label ("new label",
+                                         TRANS("Time (S)")));
+    addAndMakeVisible (juce__label3.get());
+    juce__label3->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    juce__label3->setJustificationType (juce::Justification::centredLeft);
+    juce__label3->setEditable (false, false, false);
+    juce__label3->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    juce__label3->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    juce__label3->setBounds (120, 8, 63, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -92,6 +125,9 @@ TapComponent::~TapComponent()
     tap_feedbackSlider = nullptr;
     tap_feedforwardSlider = nullptr;
     tap_delaySlider = nullptr;
+    juce__label = nullptr;
+    juce__label2 = nullptr;
+    juce__label3 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -183,6 +219,21 @@ BEGIN_JUCER_METADATA
           max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
+  <LABEL name="new label" id="a8da095189ecacad" memberName="juce__label"
+         virtualName="" explicitFocusOrder="0" pos="16 8 31 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="FB" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="450858059ee30f39" memberName="juce__label2"
+         virtualName="" explicitFocusOrder="0" pos="72 8 31 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="FF" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="2aee48343f5b5992" memberName="juce__label3"
+         virtualName="" explicitFocusOrder="0" pos="120 8 63 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Time (S)" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
