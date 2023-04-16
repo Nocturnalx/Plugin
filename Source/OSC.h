@@ -51,6 +51,9 @@ class OSC{
     
     int getMidiNote();
     int getWaveshape();
+
+    void turnOff();
+    void turnOn(float depth);
     
     void reset();
 
@@ -71,7 +74,12 @@ class OSC{
     float m_depthCoef;
     int m_midiNote;
     int m_shape;
-};
+
+    int m_runOffPointer;
+    int m_runOffLength;
+    char m_runningOff = false;
+    float m_runOffCoef = 1;
+    };
 
 class Master : public OSC{
   public:
@@ -83,7 +91,7 @@ class Harmonic : public OSC{
   public: 
     Harmonic();
 
-    void init(int offset, int waveform, double fs);
+    void init(double fs, int harm, juce::AudioProcessorValueTreeState * treeState);
 
     void setHarmonicOffset(int offset);
     void updateNote(int midiNote);
@@ -92,5 +100,15 @@ class Harmonic : public OSC{
   private:
     std::unique_ptr<Master> m_master;
 
+    int m_harmEnum;
     int m_offset;
+
+    juce::String harmParamIDs[4][8] = {{"harm1_depth_coef", "harm1_waveform", "harm1_offset",
+                                "harm1_attack", "harm1_decay", "harm1_sustain", "harm1_sus_height", "harm1_release"},
+                                {"harm2_depth_coef", "harm2_waveform", "harm2_offset",
+                                "harm2_attack", "harm2_decay", "harm2_sustain", "harm2_sus_height", "harm2_release"},
+                                {"harm3_depth_coef", "harm3_waveform", "harm3_offset",
+                                "harm3_attack", "harm3_decay", "harm3_sustain", "harm3_sus_height", "harm3_release"},
+                                {"harm4_depth_coef", "harm4_waveform", "harm4_offset",
+                                "harm4_attack", "harm4_decay", "harm4_sustain", "harm4_sus_height", "harm4_release"}};
 };

@@ -163,80 +163,15 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     
     //defining harmonics
     harmCnt = 4;
-    selectedHarm = 0;
 
     harmArr = std::unique_ptr <Harmonic []>(new Harmonic[harmCnt]);
 
-    int offset;
-    int waveform;
-    float attack;
-    float decay;
-    float sustain;
-    float susHeight;
-    float release;
-
-    offset = *treeState.getRawParameterValue("harm1_offset");
-    waveform = *treeState.getRawParameterValue("harm1_waveform");
-    attack = *treeState.getRawParameterValue("harm1_attack");
-    decay = *treeState.getRawParameterValue("harm1_decay");
-    sustain = *treeState.getRawParameterValue("harm1_sustain");
-    susHeight = *treeState.getRawParameterValue("harm1_sus_height");
-    release = *treeState.getRawParameterValue("harm1_release");
-
-    harmArr[0].init(offset, waveform, sampleRate);
-    harmArr[0].env->setAttack(attack);
-    harmArr[0].env->setDecay(decay);
-    harmArr[0].env->setSustainTime(sustain);
-    harmArr[0].env->setSustainHeight(susHeight);
-    harmArr[0].env->setRelease(release);
-
-    offset = *treeState.getRawParameterValue("harm2_offset");
-    waveform = *treeState.getRawParameterValue("harm2_waveform");
-    attack = *treeState.getRawParameterValue("harm2_attack");
-    decay = *treeState.getRawParameterValue("harm2_decay");
-    sustain = *treeState.getRawParameterValue("harm2_sustain");
-    susHeight = *treeState.getRawParameterValue("harm2_sus_height");
-    release = *treeState.getRawParameterValue("harm2_release");
-
-    harmArr[1].init(offset, waveform, sampleRate);
-    harmArr[1].env->setAttack(attack);
-    harmArr[1].env->setDecay(decay);
-    harmArr[1].env->setSustainTime(sustain);
-    harmArr[1].env->setSustainHeight(susHeight);
-    harmArr[1].env->setRelease(release);
-
-    offset = *treeState.getRawParameterValue("harm3_offset");
-    waveform = *treeState.getRawParameterValue("harm3_waveform");
-    attack = *treeState.getRawParameterValue("harm3_attack");
-    decay = *treeState.getRawParameterValue("harm3_decay");
-    sustain = *treeState.getRawParameterValue("harm3_sustain");
-    susHeight = *treeState.getRawParameterValue("harm3_sus_height");
-    release = *treeState.getRawParameterValue("harm3_release");
-
-    harmArr[2].init(offset, waveform, sampleRate);
-    harmArr[2].env->setAttack(attack);
-    harmArr[2].env->setDecay(decay);
-    harmArr[2].env->setSustainTime(sustain);
-    harmArr[2].env->setSustainHeight(susHeight);
-    harmArr[2].env->setRelease(release);
-
-    offset = *treeState.getRawParameterValue("harm4_offset");
-    waveform = *treeState.getRawParameterValue("harm4_waveform");
-    attack = *treeState.getRawParameterValue("harm4_attack");
-    decay = *treeState.getRawParameterValue("harm4_decay");
-    sustain = *treeState.getRawParameterValue("harm4_sustain");
-    susHeight = *treeState.getRawParameterValue("harm4_sus_height");
-    release = *treeState.getRawParameterValue("harm4_release");
-
-    harmArr[3].init(offset, waveform, sampleRate);
-    harmArr[3].env->setAttack(attack);
-    harmArr[3].env->setDecay(decay);
-    harmArr[3].env->setSustainTime(sustain);
-    harmArr[3].env->setSustainHeight(susHeight);
-    harmArr[3].env->setRelease(release);
+    harmArr[0].init(sampleRate, kHarm1, &treeState);
+    harmArr[1].init(sampleRate, kHarm2, &treeState);
+    harmArr[2].init(sampleRate, kHarm3, &treeState);
+    harmArr[3].init(sampleRate, kHarm4, &treeState);
 
     //delay definition
-    selectedTap = 0;
     m_DelayInstance = std::unique_ptr<Delay>(new Delay(sampleRate, &treeState));
 }
 
@@ -305,21 +240,22 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 notesPressed++;
 
             }
+
             if (message.isNoteOff()){
 
                 notesPressed--;
 
                 //if no more held down turn it all off
                 if(notesPressed == 0){
-                    m_OSCMaster->setDepth(0);
+                    m_OSCMaster->turnOff();
                     for (int i = 0; i < harmCnt; i++){
-                        harmArr[i].setDepth(0);
+                        harmArr[i].turnOff();
                     }
 
                     midiVelocity = 0;
                 }
-                
             }
+
             if (message.isPitchWheel()){
                 midiPitchBend = ((float)message.getPitchWheelValue()-8191.0)/682.66;
             }
@@ -327,19 +263,20 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     }
 
     if (notesPressed > 0){
-
+        //update note and turn up osc depth
         m_OSCMaster->setMidiNote(midiNotenumber+midiPitchBend);
-        m_OSCMaster->setDepth((float)midiVelocity/127.0);
+        m_OSCMaster->turnOn((float)midiVelocity/127.0);
 
         for (int i = 0; i < harmCnt; i++){
             harmArr[i].updateNote(m_OSCMaster->getMidiNote());
-            harmArr[i].setDepth((float)midiVelocity/127.0);
+            harmArr[i].turnOn((float)midiVelocity/127.0);
         }
     }
 
     //output signal
     for (int i = 0; i < buffer.getNumSamples(); i++){
         
+        //osc output
         float samp = 0;
         samp += m_OSCMaster->process();
 
@@ -349,13 +286,14 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
         samp /= harmCnt + 1;
 
-        // std::cout << "proc " << std::endl;
-
+        //delay proc
         samp = m_DelayInstance->process(samp);
 
+        //split to stereo
         leftData[i] = samp;
         rightData[i] = samp;
 
+        //global pan
         m_PanInstance->process(leftData[i], rightData[i]);
         m_GainInstance->process(leftData[i], rightData[i]);
     }
@@ -413,9 +351,6 @@ void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
 
     if (param == kWaveform){
         m_OSCMaster->setWaveshape((int)value);
-
-        // juce::RangedAudioParameter * param = treeState.getParameter("master_waveform");
-        // param->setValueNotifyingHost(param->convertTo0to1(value));
     }
 
     if (param == kAttack){
@@ -440,7 +375,7 @@ void JoeProjectAudioProcessor::updateGlobalParameters(int param, float value){
 }
 
 
-//overload: change params on passed harm instance
+//change params on passed harm instance
 void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float value){
     
     if (param == kDepthCoef){
@@ -470,33 +405,6 @@ void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float v
 }
 
 
-//DEPRECATED??????
-//overload: if no specific harmonic passed use selected harmonic
-void JoeProjectAudioProcessor::updateHarmParameters(int param, float value){
-    if (param == kOffset){
-        harmArr[selectedHarm].setHarmonicOffset((int)value);
-    }
-    if (param == kAttack){
-        harmArr[selectedHarm].env->setAttack(value);
-    }
-    if (param == kDecay){
-        harmArr[selectedHarm].env->setDecay(value);
-    }
-    if (param == kSustain){
-        harmArr[selectedHarm].env->setSustainTime(value);
-    }
-    if (param == kSustainHeight){
-        harmArr[selectedHarm].env->setSustainHeight(value);
-    }
-    if (param == kRelease){
-        harmArr[selectedHarm].env->setRelease(value);
-    }
-    if (param == kWaveform){
-        harmArr[selectedHarm].setWaveshape((int)value);
-    }
-}
-
-
 //for updating specifically delay parameters
 void JoeProjectAudioProcessor::updateDelayParameters( int tap, int delayParam, float value){
     if (delayParam == kDelayTime){
@@ -510,86 +418,6 @@ void JoeProjectAudioProcessor::updateDelayParameters( int tap, int delayParam, f
     if (delayParam == kFeedforward){
         m_DelayInstance->setFeedforward(tap, value);
     }
-}
-
-
-//returns ADSR info for master osc
-float JoeProjectAudioProcessor::getOscADSR(parameters param){
-    if (param == kAttack){
-        return m_OSCMaster->env->getAttack();
-    }
-    if (param == kDecay){
-        return m_OSCMaster->env->getDecay();
-    }
-    if (param == kSustain){
-        return m_OSCMaster->env->getSustain();
-    }
-    if (param == kSustainHeight){
-        return m_OSCMaster->env->getSustainHeight();
-    }
-    if (param == kRelease){
-        return m_OSCMaster->env->getRelease();
-    }
-    //if none send -1
-    return -1;
-}
-
-//returns ADSR info for given harmonic
-float JoeProjectAudioProcessor::getOscADSR(parameters param, harmonics harm){
-    if (param == kAttack){
-        return harmArr[harm].env->getAttack();
-    }
-    if (param == kDecay){
-        return harmArr[harm].env->getDecay();
-    }
-    if (param == kSustain){
-        return harmArr[harm].env->getSustain();
-    }
-    if (param == kSustainHeight){
-        return harmArr[harm].env->getSustainHeight();
-    }
-    if (param == kRelease){
-        return harmArr[harm].env->getRelease();
-    }
-    //if none send -1
-    return -1;
-}
-
-
-//sets active harmonic class instance
-void JoeProjectAudioProcessor::setHarm(harmonics harm){
-    selectedHarm = harm;
-}
-
-int JoeProjectAudioProcessor::getSelectedHarm(){
-    return selectedHarm;
-}
-
-//gets offset from selected harm.
-int JoeProjectAudioProcessor::getHarmOffset(){
-    return harmArr[selectedHarm].getOffset();
-}
-
-
-void JoeProjectAudioProcessor::setTap(taps tap){
-    selectedTap = tap;
-}
-
-int JoeProjectAudioProcessor::getSelectedTap(){
-    return selectedTap;
-}
-
-
-float JoeProjectAudioProcessor::getDelay(){
-    return m_DelayInstance->getDelay(selectedTap);
-}
-
-float JoeProjectAudioProcessor::getFeedback(){
-    return m_DelayInstance->getFeedback(selectedTap);
-}
-
-float JoeProjectAudioProcessor::getFeedforward(){
-    return m_DelayInstance->getFeedforward(selectedTap);
 }
 
 //used to turn effects on or off

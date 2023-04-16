@@ -38,7 +38,21 @@ float OSC::process()
             output = 0.0; break;   
     }
 
-    output *= m_depth * m_depthCoef;
+    output *= m_depth * m_depthCoef * m_runOffCoef;
+
+    if (m_runningOff){
+        m_runOffCoef = (-((float)m_runOffPointer/m_runOffLength))+1.0;
+        std::cout << "RO coef: " << m_runOffCoef << std::endl;
+
+        m_runOffPointer++;
+
+        if (m_runOffCoef < 0){
+            m_depth = 0;
+            m_runOffCoef = 1;
+            m_runningOff = false;
+            m_runOffPointer = 0;
+        }
+    }
 
     env->process(output);
   
@@ -49,6 +63,15 @@ float OSC::process()
         m_currentPhase -= 2.0*PI;
     
     return output;
+}
+
+void OSC::turnOff(){
+    m_runningOff = true;
+}
+
+void OSC::turnOn(float depth){
+    m_runningOff = false;
+    setDepth(depth);
 }
 
 void OSC::reset(){
@@ -88,6 +111,7 @@ void OSC::setFS(double fs){
 
     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
     m_currentPhase = 0.0;
+    m_runOffLength = 0.05 * fs;
 }
 
 
@@ -147,8 +171,6 @@ Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
 
 //Harmonic defs
 
-
-
 Harmonic::Harmonic(){
     //defaults
     setMidiNote(69);
@@ -163,10 +185,18 @@ Harmonic::Harmonic(){
     m_depthCoef = 0.0;
 }
 
-void Harmonic::init(int offset, int waveform, double fs){
+void Harmonic::init(double fs, int harm, juce::AudioProcessorValueTreeState * treeState){
+    m_harmEnum = harm;
+
     setFS(fs);
-    setHarmonicOffset(offset);
-    setWaveshape(waveform);
+    setHarmonicOffset(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kOffsetID]));
+    setWaveshape(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kWaveformID]));
+
+    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kAttackID]));
+    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kDecayID]));
+    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSustainID]));
+    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSusHeightID]));
+    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kReleaseID]));
 }
 
 //takes offset in semi tones (midi val) and sets midi note + freq val

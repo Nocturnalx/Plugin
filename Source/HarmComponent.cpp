@@ -116,14 +116,14 @@ HarmComponent::HarmComponent (JoeProjectAudioProcessor &owner, int harm)
     //[Constructor] You can add your own custom stuff here..
 
     //slider attachments
-    depthSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][0], *harm_depthSlider);
-    waveformSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][1], *harm_waveformSlider);
-    offsetSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][2], *harm_offsetSlider);
-    attackSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][3], *harm_attackSlider);
-    decaySliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][4], *harm_decaySlider);
-    sustainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][5], *harm_sustainSlider);
-    sustainHeightSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][6], *harm_susHeightSlider);
-    releaseSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, paramIDs[m_harmEnum][7], *harm_releaseSlider);
+    depthSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kDepthID], *harm_depthSlider);
+    waveformSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kWaveformID], *harm_waveformSlider);
+    offsetSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kOffsetID], *harm_offsetSlider);
+    attackSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kAttackID], *harm_attackSlider);
+    decaySliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kDecayID], *harm_decaySlider);
+    sustainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kSustainID], *harm_sustainSlider);
+    sustainHeightSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kSusHeightID], *harm_susHeightSlider);
+    releaseSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, harmParamIDs[m_harmEnum][kReleaseID], *harm_releaseSlider);
 
     //[/Constructor]
 }

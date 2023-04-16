@@ -20,12 +20,10 @@ enum parameters{
   kGain,
   kPan,
 
-  //osc params
+  //osc
   kDepthCoef,
   kWaveform,
   kOffset,
-
-  //ADSR params
   kAttack,
   kDecay,
   kSustain,
@@ -48,16 +46,27 @@ enum waveshapes {
 };
 
 enum harmonics{
-  harm1,
-  harm2,
-  harm3,
-  harm4
+  kHarm1,
+  kHarm2,
+  kHarm3,
+  kHarm4
 };
 
 enum taps{
-  tap1,
-  tap2,
-  tap3
+  kTap1,
+  kTap2,
+  kTap3
+};
+
+enum harmParams{
+  kDepthID,
+  kWaveformID,
+  kOffsetID,
+  kAttackID,
+  kDecayID,
+  kSustainID,
+  kSusHeightID,
+  kReleaseID
 };
 
 //==============================================================================
@@ -106,36 +115,14 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    // void updateGlobalParameters(parameters param, waveshapes value);
     void updateGlobalParameters(int param, float value);
-    // void updateGlobalParameters(parameters param, parameters param2, float value);
-
-    void updateHarmParameters(int param, float value);
-    // void updateHarmParameters(parameters param, waveshapes value);
-    // void updateHarmParameters(parameters param, parameters param2, float value);
     void updateHarmParameters(int harm, int param, float value);
-
     void updateDelayParameters(int tap, int delayParam, float value);
 
-    float getOscADSR(parameters param);
-    float getOscADSR(parameters param, harmonics harm);
-
-    int getSelectedHarm();
-    void setHarm(harmonics harm);
-    int getHarmOffset();
-
-    void setTap(taps tap);
-    int getSelectedTap();
-
-    float getDelay();
-    float getFeedback();
-    float getFeedforward();
     void toggleOnOff(parameters param);
 
     juce::AudioProcessorValueTreeState treeState;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-
-    
 
 private:
     std::unique_ptr<Gain> m_GainInstance;
@@ -146,9 +133,6 @@ private:
     std::unique_ptr<Harmonic []> harmArr;
 
     int harmCnt;
-    int selectedHarm;
-
-    int selectedTap;
 
     float midiPitchBend;
     int midiNotenumber;

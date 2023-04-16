@@ -266,10 +266,10 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     harm_tabbedComponent.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (harm_tabbedComponent.get());
     harm_tabbedComponent->setTabBarDepth (30);
-    harm_tabbedComponent->addTab (TRANS("harm 1"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, harm1), true);
-    harm_tabbedComponent->addTab (TRANS("harm 2"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, harm2), true);
-    harm_tabbedComponent->addTab (TRANS("harm 3"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, harm3), true);
-    harm_tabbedComponent->addTab (TRANS("harm 4"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, harm4), true);
+    harm_tabbedComponent->addTab (TRANS("harm 1"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, kHarm1), true);
+    harm_tabbedComponent->addTab (TRANS("harm 2"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, kHarm2), true);
+    harm_tabbedComponent->addTab (TRANS("harm 3"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, kHarm3), true);
+    harm_tabbedComponent->addTab (TRANS("harm 4"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, kHarm4), true);
     harm_tabbedComponent->setCurrentTabIndex (0);
 
     harm_tabbedComponent->setBounds (200, 8, 336, 176);
@@ -277,9 +277,9 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     tap_tabbedComponent.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (tap_tabbedComponent.get());
     tap_tabbedComponent->setTabBarDepth (30);
-    tap_tabbedComponent->addTab (TRANS("Tap 1"), juce::Colours::lightgrey, new TapComponent (audioProcessor, tap1), true);
-    tap_tabbedComponent->addTab (TRANS("Tap 2"), juce::Colours::lightgrey, new TapComponent (audioProcessor, tap2), true);
-    tap_tabbedComponent->addTab (TRANS("Tap 3"), juce::Colours::lightgrey, new TapComponent (audioProcessor, tap3), true);
+    tap_tabbedComponent->addTab (TRANS("Tap 1"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap1), true);
+    tap_tabbedComponent->addTab (TRANS("Tap 2"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap2), true);
+    tap_tabbedComponent->addTab (TRANS("Tap 3"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap3), true);
     tap_tabbedComponent->setCurrentTabIndex (0);
 
     tap_tabbedComponent->setBounds (16, 216, 200, 150);
