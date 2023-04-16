@@ -38,19 +38,45 @@ float OSC::process()
             output = 0.0; break;   
     }
 
-    output *= m_depth * m_depthCoef * m_runOffCoef;
+    //gain coefs - velocity, set volume, smoothing
+    output *= m_depth * m_depthCoef * m_runOffCoef * m_runUpCoef;
 
-    if (m_runningOff){
+    //note change smoothing
+
+    //note off smoothing
+    if (m_runningOff){ //if running off dont do up, otherwise do running up if true
+        //lower level gradually
         m_runOffCoef = (-((float)m_runOffPointer/m_runOffLength))+1.0;
-        std::cout << "RO coef: " << m_runOffCoef << std::endl;
 
         m_runOffPointer++;
 
+        // std::cout << "runoff " << m_runOffCoef << std::endl;
+
+        //if coef reaches 0 stop running off reset coef and pointer
         if (m_runOffCoef < 0){
-            m_depth = 0;
-            m_runOffCoef = 1;
+
             m_runningOff = false;
+            m_runOffCoef = 1;
             m_runOffPointer = 0;
+
+            //if another note is on change note to the stored note
+            //else if all other notes are off make sure velocity is 0
+            if (!m_noteOn){
+                m_depth = 0;
+            }
+        }
+
+    } else if (m_runningUp){ 
+        m_runUpCoef = ((float)m_runUpPointer/m_runUpLength);
+        m_runUpPointer++;
+
+        // std::cout << "runup " << m_runUpCoef << std::endl;
+
+        //when at 1 reset everything
+        if (m_runUpCoef > 1){
+            m_runningUp = false;
+            m_runUpCoef = 1;
+            m_runUpPointer = 0;
         }
     }
 
@@ -66,15 +92,36 @@ float OSC::process()
 }
 
 void OSC::turnOff(){
+    m_noteOn = false; //this only gets called if all are off so will be false
     m_runningOff = true;
+    m_runningUp = false;
+    m_runOffPointer = 0;
 }
 
-void OSC::turnOn(float depth){
-    m_runningOff = false;
-    setDepth(depth);
+void OSC::setDepth(float depth){
+    m_depth = depth;
 }
 
-void OSC::reset(){
+//reset smoothing
+void OSC::reset(bool noteOn){
+
+    env->reset();
+    resetPhase();
+
+    m_noteOn = noteOn;
+
+    //if note on do run off first
+    if (noteOn){
+        m_runningOff = true;
+        m_runOffPointer = 0;
+    } 
+
+    //running off here to put runoff before every runup 
+    m_runningUp = true;
+    m_runUpPointer = 0;
+}
+
+void OSC::resetPhase(){
     m_currentPhase = 0.0f;
 }
 
@@ -88,16 +135,11 @@ void OSC::setMidiNote(float note){
     //set frequency
     m_frequency = f;
     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
-    //reset();
-}
-
-void OSC::setDepth(float depth){
-    m_depth = depth;
 }
 
 void OSC::setWaveshape(int shape){
     m_shape = shape;
-    reset();
+    resetPhase();
 }
 
 void OSC::setDepthCoef(float coef){
@@ -112,6 +154,7 @@ void OSC::setFS(double fs){
     m_phaseIncrement = (2*PI*m_frequency)/m_fs;
     m_currentPhase = 0.0;
     m_runOffLength = 0.05 * fs;
+    m_runUpLength = 0.05 * fs;
 }
 
 
@@ -154,12 +197,12 @@ double OSC::renderTriangle(double phase)
 //master defs
 Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
     //defaults
+    env = new ADSR;
+
     setMidiNote(69);
     m_depth = 0.0;
 
-    env = new ADSR;
-
-    reset();
+    resetPhase();
 
     setFS(fs);
 
@@ -172,14 +215,14 @@ Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
 //Harmonic defs
 
 Harmonic::Harmonic(){
-    //defaults
+    env = new ADSR;
+    
+    //defaults these will get overwriten
     setMidiNote(69);
     m_depth = 0.0;
     m_shape = kSine;
 
-    env = new ADSR;
-
-    reset();
+    resetPhase();
 
     //unique
     m_depthCoef = 0.0;

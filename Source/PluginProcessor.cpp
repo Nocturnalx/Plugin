@@ -165,7 +165,6 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     harmCnt = 4;
 
     harmArr = std::unique_ptr <Harmonic []>(new Harmonic[harmCnt]);
-
     harmArr[0].init(sampleRate, kHarm1, &treeState);
     harmArr[1].init(sampleRate, kHarm2, &treeState);
     harmArr[2].init(sampleRate, kHarm3, &treeState);
@@ -173,6 +172,7 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     //delay definition
     m_DelayInstance = std::unique_ptr<Delay>(new Delay(sampleRate, &treeState));
+
 }
 
 void JoeProjectAudioProcessor::releaseResources(){
@@ -224,18 +224,16 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             // const auto time = metadata.samplePosition;
             if (message.isNoteOn()){
 
-                //reset osc envs
-                m_OSCMaster->env->reset();
+                //reset osc phase, envs and on smoothing
+                //if notes pressed = 0 pass noteOn = false 
+                m_OSCMaster->reset(notesPressed != 0);
                 for (int i = 0; i < harmCnt; i++){
-                    harmArr[i].env->reset();
+                    harmArr[i].reset(notesPressed != 0);
                 }
 
                 //set midi
                 midiNotenumber = message.getNoteNumber();
                 midiVelocity = message.getVelocity();
-
-                //reset osc phase
-                m_OSCMaster->reset();
 
                 notesPressed++;
 
@@ -247,6 +245,7 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
                 //if no more held down turn it all off
                 if(notesPressed == 0){
+
                     m_OSCMaster->turnOff();
                     for (int i = 0; i < harmCnt; i++){
                         harmArr[i].turnOff();
@@ -265,11 +264,11 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     if (notesPressed > 0){
         //update note and turn up osc depth
         m_OSCMaster->setMidiNote(midiNotenumber+midiPitchBend);
-        m_OSCMaster->turnOn((float)midiVelocity/127.0);
+        m_OSCMaster->setDepth((float)midiVelocity/127.0);
 
         for (int i = 0; i < harmCnt; i++){
-            harmArr[i].updateNote(m_OSCMaster->getMidiNote());
-            harmArr[i].turnOn((float)midiVelocity/127.0);
+            harmArr[i].updateNote(midiNotenumber+midiPitchBend);
+            harmArr[i].setDepth((float)midiVelocity/127.0);
         }
     }
 

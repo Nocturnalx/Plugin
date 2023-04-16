@@ -53,9 +53,9 @@ class OSC{
     int getWaveshape();
 
     void turnOff();
-    void turnOn(float depth);
     
-    void reset();
+    void reset(bool noteOn);
+    void resetPhase();
 
     ADSR * env;
     
@@ -75,11 +75,22 @@ class OSC{
     int m_midiNote;
     int m_shape;
 
-    int m_runOffPointer;
+    int m_storedNote;
+
+    bool m_noteOn = false;
+
+    int m_runOffPointer = 0;
     int m_runOffLength;
-    char m_runningOff = false;
+    bool m_runningOff = false;
     float m_runOffCoef = 1;
-    };
+
+    int m_runUpPointer = 0;
+    int m_runUpLength;
+    bool m_runningUp = false;
+    float m_runUpCoef = 1;;
+
+    int noteToBePlayed;
+};
 
 class Master : public OSC{
   public:
