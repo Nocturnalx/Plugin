@@ -13,6 +13,7 @@
 #include "OSC.h"
 #include "Pan.h"
 #include "Delay.h"
+#include "EQ.h"
 #include <math.h>
 
 enum parameters{
@@ -35,7 +36,14 @@ enum parameters{
   kFeedforward,
   kDelayTime,
   kDelayOnOff,
-  kWetness
+  kWetness,
+
+  //EQ 
+  kEQGain,
+  kEQFreq,
+  kEQControl,
+  kEQOnOff,
+  kFilterOnOff
 };
 
 enum waveshapes {
@@ -52,13 +60,8 @@ enum harmonics{
   kHarm4
 };
 
-enum taps{
-  kTap1,
-  kTap2,
-  kTap3
-};
-
-enum harmParams{
+//for use in arrays to fetch string ids
+enum harmIDIndex{
   kDepthID,
   kWaveformID,
   kOffsetID,
@@ -68,6 +71,38 @@ enum harmParams{
   kSusHeightID,
   kReleaseID
 };
+
+enum taps{
+  kTap1,
+  kTap2,
+  kTap3
+};
+
+//for use in arrays to fetch string ids
+enum tapIDIndex{
+  kFeedbackID,
+  kFeedforwardID,
+  kDelayTimeID
+};
+
+enum notches{
+  kNotch1,
+  kNotch2
+};
+
+enum shelfs{
+  kShelf1,
+  kShelf2
+};
+
+//for use in arrays to fetch string ids
+enum filterIDIndex{
+  kControllID, //this is Q or S just first in array
+  kFilterFreqID,
+  kFilterGainID,
+  kFilterOnOffID
+};
+
 
 //==============================================================================
 /**
@@ -117,7 +152,9 @@ public:
 
     void updateGlobalParameters(int param, float value);
     void updateHarmParameters(int harm, int param, float value);
-    void updateDelayParameters(int tap, int delayParam, float value);
+    void updateDelayParameters(int tap, int param, float value);
+    void updateNotchParameters(notches notch, int param, float value);
+    void updateShelfParameters(shelfs shelf, int param, float value);
 
     void toggleOnOff(parameters param);
 
@@ -131,6 +168,7 @@ private:
 
     std::unique_ptr<Master> m_OSCMaster;
     std::unique_ptr<Harmonic []> harmArr;
+    std::unique_ptr<EQ> m_EQInstance;
 
     int harmCnt;
 

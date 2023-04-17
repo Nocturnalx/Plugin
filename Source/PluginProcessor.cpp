@@ -45,7 +45,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout JoeProjectAudioProcessor::cr
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_attack", "harm1 Attack", 0.0f, 0.5f, 0.1f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_decay", "harm1 Decay", 0.0f, 0.5f, 0.3f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_sustain", "harm1 Sustain", 0.0f, 0.5f, 0.1f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_sustain", "harm1 Sustain", 0.0f, 2.0f, 0.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_sus_height", "harm1 Sus Height", 0.0f, 1.0f, 0.4f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_release", "harm1 Release", 0.0f, 0.5f, 0.3f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("harm1_depth_coef", "harm1 Depth Coef", 0.0f, 1.0f, 0.0f));
@@ -94,6 +94,29 @@ juce::AudioProcessorValueTreeState::ParameterLayout JoeProjectAudioProcessor::cr
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("delay_wetness", "Delay Wetness", 0.0f, 1.0f, 1.0f));    
     layout.add(std::make_unique<juce::AudioParameterBool>("delay_toggle", "Delay toggle", true));    
+    
+    //EQ params  
+    layout.add(std::make_unique<juce::AudioParameterBool>("eq_toggle", "EQ Toggle", false));    
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch1_fc", "Notch 1 Cutoff", 20.0f, 20000.0f, 500.0f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch1_q", "Notch 1 Q", 0.0f, 100.0f, 30.0f));  
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch1_gain", "Notch 1 Gain", 0.0f, 2.0f, 0.1f));  
+    layout.add(std::make_unique<juce::AudioParameterBool>("notch1_toggle", "Notch 1 Toggle", false));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch2_fc", "Notch 2 Cutoff", 20.0f, 20000.0f, 5000.0f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch2_q", "Notch 2 Q", 0.0f, 100.0f, 30.0f));  
+    layout.add(std::make_unique<juce::AudioParameterFloat>("notch2_gain", "Notch 2 Gain", 0.0f, 2.0f, 2.0f));  
+    layout.add(std::make_unique<juce::AudioParameterBool>("notch2_toggle", "Notch 2 Toggle", false));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf1_fc", "Shelf 1 Cutoff", 20.0f, 20000.0f, 60.0f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf1_s", "Shelf 1 S", 0.0f, 100.0f, 30.0f));  
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf1_gain", "Shelf 1 Gain", 0.0f, 2.0f, 0.6f));  
+    layout.add(std::make_unique<juce::AudioParameterBool>("shelf1_toggle", "Shelf 1 Toggle", false));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf2_fc", "Shelf 2 Cutoff", 20.0f, 20000.0f, 16000.0f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf2_s", "Shelf 2 S", 0.0f, 100.0f, 30.0f));  
+    layout.add(std::make_unique<juce::AudioParameterFloat>("shelf2_gain", "Shelf 2 Gain", 0.0f, 2.0f, 0.1f));  
+    layout.add(std::make_unique<juce::AudioParameterBool>("shelf2_toggle", "Shelf 2 Toggle", false));
 
     return layout;
 }
@@ -172,6 +195,9 @@ void JoeProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     //delay definition
     m_DelayInstance = std::unique_ptr<Delay>(new Delay(sampleRate, &treeState));
+
+    //eq deffinition
+    m_EQInstance = std::unique_ptr<EQ>(new EQ(sampleRate, &treeState));
 
 }
 
@@ -287,6 +313,9 @@ void JoeProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
 
         //delay proc
         samp = m_DelayInstance->process(samp);
+
+        //eq proc
+        samp = m_EQInstance->process(samp);
 
         //split to stereo
         leftData[i] = samp;
@@ -405,17 +434,56 @@ void JoeProjectAudioProcessor::updateHarmParameters(int harm, int param, float v
 
 
 //for updating specifically delay parameters
-void JoeProjectAudioProcessor::updateDelayParameters( int tap, int delayParam, float value){
-    if (delayParam == kDelayTime){
+void JoeProjectAudioProcessor::updateDelayParameters(int tap, int param, float value){
+    if (param == kDelayTime){
         m_DelayInstance->setDelay(tap, value);    
     }
 
-    if (delayParam == kFeedback){
+    if (param == kFeedback){
         m_DelayInstance->setFeedback(tap, value);
     }
 
-    if (delayParam == kFeedforward){
+    if (param == kFeedforward){
         m_DelayInstance->setFeedforward(tap, value);
+    }
+}
+
+
+void JoeProjectAudioProcessor::updateNotchParameters(notches notch, int param, float value){
+    
+    if (kEQControl){
+        m_EQInstance->notchArr[notch].setQ(value);
+    }
+
+    if (kEQFreq){
+        m_EQInstance->notchArr[notch].setFreq(value);
+    }
+
+    if (kEQGain) {
+        m_EQInstance->notchArr[notch].setGain(value);
+    }
+
+    if (kFilterOnOff){
+        m_EQInstance->notchArr[notch].toggleOnOff();
+    }
+}
+
+void JoeProjectAudioProcessor::updateShelfParameters(shelfs shelf, int param, float value){
+    
+    if (kEQControl){
+        m_EQInstance->shelfArr[shelf].setS(value);
+    }
+
+    if (kEQFreq){
+        m_EQInstance->shelfArr[shelf].setFreq(value);
+    }
+
+    if (kEQGain) {
+        m_EQInstance->shelfArr[shelf].setGain(value);
+    }
+
+    if (kFilterOnOff){
+        m_EQInstance->shelfArr[shelf].toggleOnOff();
     }
 }
 
@@ -423,6 +491,10 @@ void JoeProjectAudioProcessor::updateDelayParameters( int tap, int delayParam, f
 void JoeProjectAudioProcessor::toggleOnOff(parameters param){
     if (param == kDelayOnOff){
         m_DelayInstance->toggleOnOff();
+    }
+
+    if (param == kEQOnOff){
+        m_EQInstance->toggleOnOff();
     }
 }
 //==============================================================================

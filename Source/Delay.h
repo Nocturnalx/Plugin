@@ -41,7 +41,7 @@ class Delay{
     std::unique_ptr <DelayLine []> tapArr;
     int tapCnt;
 
-    char m_isOn;
+    bool m_isOn;
 
     double m_sampleRate;
     float m_wetness;

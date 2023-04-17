@@ -34,6 +34,12 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
+    juce__groupComponent.reset (new juce::GroupComponent ("new group",
+                                                          TRANS("EQ")));
+    addAndMakeVisible (juce__groupComponent.get());
+
+    juce__groupComponent->setBounds (304, 192, 568, 192);
+
     effects_group.reset (new juce::GroupComponent ("effects group",
                                                    TRANS("Delay")));
     addAndMakeVisible (effects_group.get());
@@ -44,7 +50,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
                                                     TRANS("Mix")));
     addAndMakeVisible (effects_group2.get());
 
-    effects_group2->setBounds (544, 72, 144, 120);
+    effects_group2->setBounds (728, 0, 144, 120);
 
     master_group.reset (new juce::GroupComponent ("master group",
                                                   TRANS("Master Oscillator")));
@@ -70,7 +76,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     juce__label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     juce__label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    juce__label->setBounds (552, 136, 88, 24);
+    juce__label->setBounds (736, 64, 88, 24);
 
     m_gainSlider.reset (new juce::Slider ("gain"));
     addAndMakeVisible (m_gainSlider.get());
@@ -79,7 +85,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     m_gainSlider->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     m_gainSlider->addListener (this);
 
-    m_gainSlider->setBounds (552, 144, 128, 48);
+    m_gainSlider->setBounds (736, 72, 128, 48);
 
     juce__label2.reset (new juce::Label ("new label",
                                          TRANS("Depth")));
@@ -99,7 +105,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     m_panSlider->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     m_panSlider->addListener (this);
 
-    m_panSlider->setBounds (552, 96, 128, 48);
+    m_panSlider->setBounds (736, 24, 128, 48);
 
     Pan_label.reset (new juce::Label ("pan",
                                       TRANS("Pan")));
@@ -110,7 +116,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     Pan_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     Pan_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    Pan_label->setBounds (552, 88, 80, 24);
+    Pan_label->setBounds (736, 16, 80, 24);
 
     m_attackSlider.reset (new juce::Slider ("attack"));
     addAndMakeVisible (m_attackSlider.get());
@@ -251,18 +257,6 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
     delay_onOffButton->setBounds (224, 208, 72, 24);
 
-    m_presetBox.reset (new juce::ComboBox ("presets"));
-    addAndMakeVisible (m_presetBox.get());
-    m_presetBox->setEditableText (false);
-    m_presetBox->setJustificationType (juce::Justification::centredLeft);
-    m_presetBox->setTextWhenNothingSelected (juce::String());
-    m_presetBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    m_presetBox->addItem (TRANS("preset 1"), 1);
-    m_presetBox->addItem (TRANS("preset 2"), 2);
-    m_presetBox->addListener (this);
-
-    m_presetBox->setBounds (544, 8, 128, 24);
-
     harm_tabbedComponent.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (harm_tabbedComponent.get());
     harm_tabbedComponent->setTabBarDepth (30);
@@ -279,10 +273,10 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     tap_tabbedComponent->setTabBarDepth (30);
     tap_tabbedComponent->addTab (TRANS("Tap 1"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap1), true);
     tap_tabbedComponent->addTab (TRANS("Tap 2"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap2), true);
-    tap_tabbedComponent->addTab (TRANS("Tap 3"), juce::Colours::lightgrey, new TapComponent (audioProcessor, kTap3), true);
+    tap_tabbedComponent->addTab (TRANS("Tap 3"), juce::Colours::lightgrey, new TapComponent (audioProcessor,kTap3), true);
     tap_tabbedComponent->setCurrentTabIndex (0);
 
-    tap_tabbedComponent->setBounds (16, 216, 200, 150);
+    tap_tabbedComponent->setBounds (24, 216, 200, 150);
 
     m_waveformSlider.reset (new juce::Slider ("waveform slider"));
     addAndMakeVisible (m_waveformSlider.get());
@@ -293,17 +287,162 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
     m_waveformSlider->setBounds (112, 32, 55, 48);
 
+    m_shelf1FreqSlider.reset (new juce::Slider ("shelf 1 Freq slider"));
+    addAndMakeVisible (m_shelf1FreqSlider.get());
+    m_shelf1FreqSlider->setRange (20, 20000, 0);
+    m_shelf1FreqSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf1FreqSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf1FreqSlider->addListener (this);
+
+    m_shelf1FreqSlider->setBounds (336, 232, 128, 48);
+
+    m_shelf1SSlider.reset (new juce::Slider ("shelf 1 S slider"));
+    addAndMakeVisible (m_shelf1SSlider.get());
+    m_shelf1SSlider->setRange (0, 100, 0);
+    m_shelf1SSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf1SSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf1SSlider->addListener (this);
+
+    m_shelf1SSlider->setBounds (336, 264, 128, 48);
+
+    m_shelf1GainSlider.reset (new juce::Slider ("shelf 1 gain slider"));
+    addAndMakeVisible (m_shelf1GainSlider.get());
+    m_shelf1GainSlider->setRange (0, 2, 0);
+    m_shelf1GainSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf1GainSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf1GainSlider->addListener (this);
+
+    m_shelf1GainSlider->setBounds (336, 296, 128, 48);
+
+    m_notch1FreqSlider.reset (new juce::Slider ("notch 1 Freq slider"));
+    addAndMakeVisible (m_notch1FreqSlider.get());
+    m_notch1FreqSlider->setRange (20, 20000, 0);
+    m_notch1FreqSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch1FreqSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch1FreqSlider->addListener (this);
+
+    m_notch1FreqSlider->setBounds (465, 232, 128, 48);
+
+    m_notch1QSlider.reset (new juce::Slider ("notch 1 Q slider"));
+    addAndMakeVisible (m_notch1QSlider.get());
+    m_notch1QSlider->setRange (0, 100, 0);
+    m_notch1QSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch1QSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch1QSlider->addListener (this);
+
+    m_notch1QSlider->setBounds (465, 264, 128, 48);
+
+    m_notch1GainSlider.reset (new juce::Slider ("notch 1 gain slider"));
+    addAndMakeVisible (m_notch1GainSlider.get());
+    m_notch1GainSlider->setRange (0, 2, 0);
+    m_notch1GainSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch1GainSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch1GainSlider->addListener (this);
+
+    m_notch1GainSlider->setBounds (465, 296, 128, 48);
+
+    m_notch2FreqSlider.reset (new juce::Slider ("notch 2 Freq slider"));
+    addAndMakeVisible (m_notch2FreqSlider.get());
+    m_notch2FreqSlider->setRange (20, 20000, 0);
+    m_notch2FreqSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch2FreqSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch2FreqSlider->addListener (this);
+
+    m_notch2FreqSlider->setBounds (600, 232, 128, 48);
+
+    m_notch2QSlider.reset (new juce::Slider ("notch 2 Q slider"));
+    addAndMakeVisible (m_notch2QSlider.get());
+    m_notch2QSlider->setRange (0, 100, 0);
+    m_notch2QSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch2QSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch2QSlider->addListener (this);
+
+    m_notch2QSlider->setBounds (600, 264, 128, 48);
+
+    m_notch2GainSlider.reset (new juce::Slider ("notch 2 gain slider"));
+    addAndMakeVisible (m_notch2GainSlider.get());
+    m_notch2GainSlider->setRange (0, 2, 0);
+    m_notch2GainSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_notch2GainSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_notch2GainSlider->addListener (this);
+
+    m_notch2GainSlider->setBounds (600, 296, 128, 48);
+
+    m_shelf2FreqSlider.reset (new juce::Slider ("shelf 2 Freq slider"));
+    addAndMakeVisible (m_shelf2FreqSlider.get());
+    m_shelf2FreqSlider->setRange (20, 20000, 0);
+    m_shelf2FreqSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf2FreqSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf2FreqSlider->addListener (this);
+
+    m_shelf2FreqSlider->setBounds (728, 232, 128, 48);
+
+    m_shelf2SSlider.reset (new juce::Slider ("shelf 2 S slider"));
+    addAndMakeVisible (m_shelf2SSlider.get());
+    m_shelf2SSlider->setRange (0, 100, 0);
+    m_shelf2SSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf2SSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf2SSlider->addListener (this);
+
+    m_shelf2SSlider->setBounds (728, 264, 128, 48);
+
+    m_shelf2GainSlider.reset (new juce::Slider ("shelf 2 gain slider"));
+    addAndMakeVisible (m_shelf2GainSlider.get());
+    m_shelf2GainSlider->setRange (0, 2, 0);
+    m_shelf2GainSlider->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    m_shelf2GainSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
+    m_shelf2GainSlider->addListener (this);
+
+    m_shelf2GainSlider->setBounds (728, 296, 128, 48);
+
+    m_shelf1OnOffButton.reset (new juce::ToggleButton ("shelf 1 on off"));
+    addAndMakeVisible (m_shelf1OnOffButton.get());
+    m_shelf1OnOffButton->setButtonText (juce::String());
+    m_shelf1OnOffButton->addListener (this);
+
+    m_shelf1OnOffButton->setBounds (432, 344, 32, 24);
+
+    m_notch1OnOffButton.reset (new juce::ToggleButton ("notch 1 on off"));
+    addAndMakeVisible (m_notch1OnOffButton.get());
+    m_notch1OnOffButton->setButtonText (juce::String());
+    m_notch1OnOffButton->addListener (this);
+
+    m_notch1OnOffButton->setBounds (560, 344, 32, 24);
+
+    m_notch2OnOffButton.reset (new juce::ToggleButton ("notch 2 on off"));
+    addAndMakeVisible (m_notch2OnOffButton.get());
+    m_notch2OnOffButton->setButtonText (juce::String());
+    m_notch2OnOffButton->addListener (this);
+
+    m_notch2OnOffButton->setBounds (696, 344, 32, 24);
+
+    m_shelf2OnOffButton.reset (new juce::ToggleButton ("shelf 2 on off"));
+    addAndMakeVisible (m_shelf2OnOffButton.get());
+    m_shelf2OnOffButton->setButtonText (juce::String());
+    m_shelf2OnOffButton->addListener (this);
+
+    m_shelf2OnOffButton->setBounds (824, 344, 32, 24);
+
+    m_EQOnOffButton.reset (new juce::ToggleButton ("EQ on off"));
+    addAndMakeVisible (m_EQOnOffButton.get());
+    m_EQOnOffButton->setButtonText (TRANS("On/Off"));
+    m_EQOnOffButton->addListener (this);
+
+    m_EQOnOffButton->setBounds (792, 208, 80, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (700, 385);
+    setSize (900, 385);
 
 
     //[Constructor] You can add your own custom stuff here..
+    //mix
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "gain", *m_gainSlider);
     panSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "pan", *m_panSlider);
 
+    //OSCs
     depthSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "master_depth_coef", *m_depthSlider);
     attackSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "master_attack", *m_attackSlider);
     decaySliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "master_decay", *m_decaySlider);
@@ -312,8 +451,32 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     releaseSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "master_release", *m_releaseSlider);
     waveformSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "master_waveform", *m_waveformSlider);
 
+    //delay
     delayWetnessSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "delay_wetness", *delay_wetSlider);
     delayOnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "delay_toggle", *delay_onOffButton);
+
+    //EQ
+    EQOnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "eq_toggle", *m_EQOnOffButton);
+
+    shelf1FreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf1_fc", *m_shelf1FreqSlider);
+    shelf1SSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf1_s", *m_shelf1SSlider);
+    shelf1GainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf1_gain", *m_shelf1GainSlider);
+    shelf1OnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "shelf1_toggle", *m_shelf1OnOffButton);
+
+    notch1FreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch1_fc", *m_notch1FreqSlider);
+    notch1SSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch1_q", *m_notch1QSlider);
+    notch1GainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch1_gain", *m_notch1GainSlider);
+    notch1OnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "notch1_toggle", *m_notch1OnOffButton);
+
+    notch2FreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch2_fc", *m_notch2FreqSlider);
+    notch2SSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch2_q", *m_notch2QSlider);
+    notch2GainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "notch2_gain", *m_notch2GainSlider);
+    notch2OnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "notch2_toggle", *m_notch2OnOffButton);
+
+    shelf2FreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf2_fc", *m_shelf2FreqSlider);
+    shelf2SSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf2_s", *m_shelf2SSlider);
+    shelf2GainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.treeState, "shelf2_gain", *m_shelf2GainSlider);
+    shelf2OnOffButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.treeState, "shelf2_toggle", *m_shelf2OnOffButton);
 
     //[/Constructor]
 }
@@ -322,9 +485,11 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //delete attachments before to prevent free on empty component pointers
+    //mix
     gainSliderAttachment = nullptr;
     panSliderAttachment = nullptr;
 
+    //OSCs
     depthSliderAttachment = nullptr;
     attackSliderAttachment = nullptr;
     decaySliderAttachment = nullptr;
@@ -333,11 +498,36 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
     releaseSliderAttachment = nullptr;
     waveformSliderAttachment = nullptr;
 
+    //delay
     delayWetnessSliderAttachment = nullptr;
     delayOnOffButtonAttachment = nullptr;
 
+    //EQ
+    EQOnOffButtonAttachment = nullptr;
+
+    shelf1FreqSliderAttachment = nullptr;
+    shelf1SSliderAttachment = nullptr;
+    shelf1GainSliderAttachment = nullptr;
+    shelf1OnOffButtonAttachment = nullptr;
+
+    notch1FreqSliderAttachment = nullptr;
+    notch1SSliderAttachment = nullptr;
+    notch1GainSliderAttachment = nullptr;
+    notch1OnOffButtonAttachment = nullptr;
+
+    notch2FreqSliderAttachment = nullptr;
+    notch2SSliderAttachment = nullptr;
+    notch2GainSliderAttachment = nullptr;
+    notch2OnOffButtonAttachment = nullptr;
+
+    shelf2FreqSliderAttachment = nullptr;
+    shelf2SSliderAttachment = nullptr;
+    shelf2GainSliderAttachment = nullptr;nullptr;
+    shelf2OnOffButtonAttachment = nullptr;
+
     //[/Destructor_pre]
 
+    juce__groupComponent = nullptr;
     effects_group = nullptr;
     effects_group2 = nullptr;
     master_group = nullptr;
@@ -361,10 +551,26 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
     delay_wetSlider = nullptr;
     wetslider_label = nullptr;
     delay_onOffButton = nullptr;
-    m_presetBox = nullptr;
     harm_tabbedComponent = nullptr;
     tap_tabbedComponent = nullptr;
     m_waveformSlider = nullptr;
+    m_shelf1FreqSlider = nullptr;
+    m_shelf1SSlider = nullptr;
+    m_shelf1GainSlider = nullptr;
+    m_notch1FreqSlider = nullptr;
+    m_notch1QSlider = nullptr;
+    m_notch1GainSlider = nullptr;
+    m_notch2FreqSlider = nullptr;
+    m_notch2QSlider = nullptr;
+    m_notch2GainSlider = nullptr;
+    m_shelf2FreqSlider = nullptr;
+    m_shelf2SSlider = nullptr;
+    m_shelf2GainSlider = nullptr;
+    m_shelf1OnOffButton = nullptr;
+    m_notch1OnOffButton = nullptr;
+    m_notch2OnOffButton = nullptr;
+    m_shelf2OnOffButton = nullptr;
+    m_EQOnOffButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -458,6 +664,78 @@ void JoeProjectAudioProcessorEditor::sliderValueChanged (juce::Slider* sliderTha
         audioProcessor.updateGlobalParameters(kWaveform, m_waveformSlider->getValue());
         //[/UserSliderCode_m_waveformSlider]
     }
+    else if (sliderThatWasMoved == m_shelf1FreqSlider.get())
+    {
+        //[UserSliderCode_m_shelf1FreqSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf1, kEQFreq, m_shelf1FreqSlider->getValue());
+        //[/UserSliderCode_m_shelf1FreqSlider]
+    }
+    else if (sliderThatWasMoved == m_shelf1SSlider.get())
+    {
+        //[UserSliderCode_m_shelf1SSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf1, kEQControl, m_shelf1SSlider->getValue());
+        //[/UserSliderCode_m_shelf1SSlider]
+    }
+    else if (sliderThatWasMoved == m_shelf1GainSlider.get())
+    {
+        //[UserSliderCode_m_shelf1GainSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf1, kEQGain, m_shelf1GainSlider->getValue());
+        //[/UserSliderCode_m_shelf1GainSlider]
+    }
+    else if (sliderThatWasMoved == m_notch1FreqSlider.get())
+    {
+        //[UserSliderCode_m_notch1FreqSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch1, kEQFreq, m_notch1FreqSlider->getValue());
+        //[/UserSliderCode_m_notch1FreqSlider]
+    }
+    else if (sliderThatWasMoved == m_notch1QSlider.get())
+    {
+        //[UserSliderCode_m_notch1QSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch1, kEQControl, m_notch1QSlider->getValue());
+        //[/UserSliderCode_m_notch1QSlider]
+    }
+    else if (sliderThatWasMoved == m_notch1GainSlider.get())
+    {
+        //[UserSliderCode_m_notch1GainSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch1, kEQGain, m_notch1GainSlider->getValue());
+        //[/UserSliderCode_m_notch1GainSlider]
+    }
+    else if (sliderThatWasMoved == m_notch2FreqSlider.get())
+    {
+        //[UserSliderCode_m_notch2FreqSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch2, kEQFreq, m_notch2FreqSlider->getValue());
+        //[/UserSliderCode_m_notch2FreqSlider]
+    }
+    else if (sliderThatWasMoved == m_notch2QSlider.get())
+    {
+        //[UserSliderCode_m_notch2QSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch2, kEQControl, m_notch2QSlider->getValue());
+        //[/UserSliderCode_m_notch2QSlider]
+    }
+    else if (sliderThatWasMoved == m_notch2GainSlider.get())
+    {
+        //[UserSliderCode_m_notch2GainSlider] -- add your slider handling code here..
+        audioProcessor.updateNotchParameters(kNotch2, kEQGain, m_notch2GainSlider->getValue());
+        //[/UserSliderCode_m_notch2GainSlider]
+    }
+    else if (sliderThatWasMoved == m_shelf2FreqSlider.get())
+    {
+        //[UserSliderCode_m_shelf2FreqSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf2, kEQFreq, m_shelf2FreqSlider->getValue());
+        //[/UserSliderCode_m_shelf2FreqSlider]
+    }
+    else if (sliderThatWasMoved == m_shelf2SSlider.get())
+    {
+        //[UserSliderCode_m_shelf2SSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf2, kEQControl, m_shelf2SSlider->getValue());
+        //[/UserSliderCode_m_shelf2SSlider]
+    }
+    else if (sliderThatWasMoved == m_shelf2GainSlider.get())
+    {
+        //[UserSliderCode_m_shelf2GainSlider] -- add your slider handling code here..
+        audioProcessor.updateShelfParameters(kShelf2, kEQGain, m_shelf2GainSlider->getValue());
+        //[/UserSliderCode_m_shelf2GainSlider]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -474,24 +752,39 @@ void JoeProjectAudioProcessorEditor::buttonClicked (juce::Button* buttonThatWasC
         audioProcessor.toggleOnOff(kDelayOnOff);
         //[/UserButtonCode_delay_onOffButton]
     }
+    else if (buttonThatWasClicked == m_shelf1OnOffButton.get())
+    {
+        //[UserButtonCode_m_shelf1OnOffButton] -- add your button handler code here..
+        audioProcessor.updateShelfParameters(kShelf1, kFilterOnOff, 0);
+        //[/UserButtonCode_m_shelf1OnOffButton]
+    }
+    else if (buttonThatWasClicked == m_notch1OnOffButton.get())
+    {
+        //[UserButtonCode_m_notch1OnOffButton] -- add your button handler code here..
+        audioProcessor.updateNotchParameters(kNotch1, kFilterOnOff, 0);
+        //[/UserButtonCode_m_notch1OnOffButton]
+    }
+    else if (buttonThatWasClicked == m_notch2OnOffButton.get())
+    {
+        //[UserButtonCode_m_notch2OnOffButton] -- add your button handler code here..
+        audioProcessor.updateNotchParameters(kNotch2, kFilterOnOff, 0);
+        //[/UserButtonCode_m_notch2OnOffButton]
+    }
+    else if (buttonThatWasClicked == m_shelf2OnOffButton.get())
+    {
+        //[UserButtonCode_m_shelf2OnOffButton] -- add your button handler code here..
+        audioProcessor.updateShelfParameters(kShelf2, kFilterOnOff, 0);
+        //[/UserButtonCode_m_shelf2OnOffButton]
+    }
+    else if (buttonThatWasClicked == m_EQOnOffButton.get())
+    {
+        //[UserButtonCode_m_EQOnOffButton] -- add your button handler code here..
+        audioProcessor.toggleOnOff(kEQOnOff);
+        //[/UserButtonCode_m_EQOnOffButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
-}
-
-void JoeProjectAudioProcessorEditor::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged)
-{
-    //[UsercomboBoxChanged_Pre]
-    //[/UsercomboBoxChanged_Pre]
-
-    if (comboBoxThatHasChanged == m_presetBox.get())
-    {
-        //[UserComboBoxCode_m_presetBox] -- add your combo box handling code here..
-        //[/UserComboBoxCode_m_presetBox]
-    }
-
-    //[UsercomboBoxChanged_Post]
-    //[/UsercomboBoxChanged_Post]
 }
 
 
@@ -513,12 +806,14 @@ BEGIN_JUCER_METADATA
                  componentName="" parentClasses="public juce::AudioProcessorEditor"
                  constructorParams="JoeProjectAudioProcessor&amp; owner" variableInitialisers="AudioProcessorEditor(owner), audioProcessor(owner)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="700" initialHeight="385">
+                 fixedSize="0" initialWidth="900" initialHeight="385">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GROUPCOMPONENT name="new group" id="c961087fb8b66325" memberName="juce__groupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="304 192 568 192" title="EQ"/>
   <GROUPCOMPONENT name="effects group" id="a1843f4e14437c21" memberName="effects_group"
                   virtualName="" explicitFocusOrder="0" pos="0 192 304 192" title="Delay"/>
   <GROUPCOMPONENT name="effects group" id="a352b916ecb48379" memberName="effects_group2"
-                  virtualName="" explicitFocusOrder="0" pos="544 72 144 120" title="Mix"/>
+                  virtualName="" explicitFocusOrder="0" pos="728 0 144 120" title="Mix"/>
   <GROUPCOMPONENT name="master group" id="25f270b0cd5b75bf" memberName="master_group"
                   virtualName="" explicitFocusOrder="0" pos="0 0 200 192" title="Master Oscillator"/>
   <SLIDER name="Gain" id="42f75b1dba908f01" memberName="m_depthSlider"
@@ -527,12 +822,12 @@ BEGIN_JUCER_METADATA
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="new label" id="a07cd26b6f2d246c" memberName="juce__label"
-         virtualName="" explicitFocusOrder="0" pos="552 136 88 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="736 64 88 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Output Gain" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="gain" id="ef8ea6ef3e44ff24" memberName="m_gainSlider" virtualName=""
-          explicitFocusOrder="0" pos="552 144 128 48" min="0.0" max="1.0"
+          explicitFocusOrder="0" pos="736 72 128 48" min="0.0" max="1.0"
           int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
@@ -542,12 +837,12 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="pan" id="a46ddc996119acdc" memberName="m_panSlider" virtualName=""
-          explicitFocusOrder="0" pos="552 96 128 48" min="-1.0" max="1.0"
+          explicitFocusOrder="0" pos="736 24 128 48" min="-1.0" max="1.0"
           int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="pan" id="786869f480bd2bcf" memberName="Pan_label" virtualName=""
-         explicitFocusOrder="0" pos="552 88 80 24" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="736 16 80 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Pan" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
@@ -619,37 +914,108 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="on off button" id="4969d8c8f9de487d" memberName="delay_onOffButton"
                 virtualName="" explicitFocusOrder="0" pos="224 208 72 24" buttonText="On/Off"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="1"/>
-  <COMBOBOX name="presets" id="fd0a8d20684eac8b" memberName="m_presetBox"
-            virtualName="" explicitFocusOrder="0" pos="544 8 128 24" editable="0"
-            layout="33" items="preset 1&#10;preset 2" textWhenNonSelected=""
-            textWhenNoItems="(no choices)"/>
   <TABBEDCOMPONENT name="harm tabs" id="b904e83a971cf3dd" memberName="harm_tabbedComponent"
                    virtualName="" explicitFocusOrder="0" pos="200 8 336 176" orientation="top"
                    tabBarDepth="30" initialTab="0">
     <TAB name="harm 1" colour="ffd3d3d3" useJucerComp="0" contentClassName="HarmComponent"
-         constructorParams="audioProcessor, harm1" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kHarm1" jucerComponentFile=""/>
     <TAB name="harm 2" colour="ffd3d3d3" useJucerComp="0" contentClassName="HarmComponent"
-         constructorParams="audioProcessor, harm2" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kHarm2" jucerComponentFile=""/>
     <TAB name="harm 3" colour="ffd3d3d3" useJucerComp="0" contentClassName="HarmComponent"
-         constructorParams="audioProcessor, harm3" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kHarm3" jucerComponentFile=""/>
     <TAB name="harm 4" colour="ffd3d3d3" useJucerComp="0" contentClassName="HarmComponent"
-         constructorParams="audioProcessor, harm4" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kHarm4" jucerComponentFile=""/>
   </TABBEDCOMPONENT>
   <TABBEDCOMPONENT name="tap tabs" id="9f1b906844882e15" memberName="tap_tabbedComponent"
-                   virtualName="" explicitFocusOrder="0" pos="16 216 200 150" orientation="top"
+                   virtualName="" explicitFocusOrder="0" pos="24 216 200 150" orientation="top"
                    tabBarDepth="30" initialTab="0">
     <TAB name="Tap 1" colour="ffd3d3d3" useJucerComp="0" contentClassName="TapComponent"
-         constructorParams="audioProcessor, tap1" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kTap1" jucerComponentFile=""/>
     <TAB name="Tap 2" colour="ffd3d3d3" useJucerComp="0" contentClassName="TapComponent"
-         constructorParams="audioProcessor, tap2" jucerComponentFile=""/>
+         constructorParams="audioProcessor, kTap2" jucerComponentFile=""/>
     <TAB name="Tap 3" colour="ffd3d3d3" useJucerComp="0" contentClassName="TapComponent"
-         constructorParams="audioProcessor, tap3" jucerComponentFile=""/>
+         constructorParams="audioProcessor,kTap3" jucerComponentFile=""/>
   </TABBEDCOMPONENT>
   <SLIDER name="waveform slider" id="cbd7d154315fd17f" memberName="m_waveformSlider"
           virtualName="" explicitFocusOrder="0" pos="112 32 55 48" min="0.0"
           max="3.0" int="1.0" style="RotaryHorizontalVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
+  <SLIDER name="shelf 1 Freq slider" id="3fa4dde19d7b006c" memberName="m_shelf1FreqSlider"
+          virtualName="" explicitFocusOrder="0" pos="336 232 128 48" min="20.0"
+          max="20000.0" int="0.0" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <SLIDER name="shelf 1 S slider" id="b0a86a18fba1425" memberName="m_shelf1SSlider"
+          virtualName="" explicitFocusOrder="0" pos="336 264 128 48" min="0.0"
+          max="100.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="shelf 1 gain slider" id="24e83bfd6b835908" memberName="m_shelf1GainSlider"
+          virtualName="" explicitFocusOrder="0" pos="336 296 128 48" min="0.0"
+          max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="notch 1 Freq slider" id="5b56c0233e267a90" memberName="m_notch1FreqSlider"
+          virtualName="" explicitFocusOrder="0" pos="465 232 128 48" min="20.0"
+          max="20000.0" int="0.0" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <SLIDER name="notch 1 Q slider" id="7ae28b7dc567ed27" memberName="m_notch1QSlider"
+          virtualName="" explicitFocusOrder="0" pos="465 264 128 48" min="0.0"
+          max="100.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="notch 1 gain slider" id="445d9796719e8d47" memberName="m_notch1GainSlider"
+          virtualName="" explicitFocusOrder="0" pos="465 296 128 48" min="0.0"
+          max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="notch 2 Freq slider" id="362cdacce89fe313" memberName="m_notch2FreqSlider"
+          virtualName="" explicitFocusOrder="0" pos="600 232 128 48" min="20.0"
+          max="20000.0" int="0.0" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <SLIDER name="notch 2 Q slider" id="54ca0993d3b16767" memberName="m_notch2QSlider"
+          virtualName="" explicitFocusOrder="0" pos="600 264 128 48" min="0.0"
+          max="100.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="notch 2 gain slider" id="fea1d7591006ff85" memberName="m_notch2GainSlider"
+          virtualName="" explicitFocusOrder="0" pos="600 296 128 48" min="0.0"
+          max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="shelf 2 Freq slider" id="b9121f4c3e51fd6e" memberName="m_shelf2FreqSlider"
+          virtualName="" explicitFocusOrder="0" pos="728 232 128 48" min="20.0"
+          max="20000.0" int="0.0" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <SLIDER name="shelf 2 S slider" id="a0f775e9f5261afd" memberName="m_shelf2SSlider"
+          virtualName="" explicitFocusOrder="0" pos="728 264 128 48" min="0.0"
+          max="100.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <SLIDER name="shelf 2 gain slider" id="7cadaad958d239b8" memberName="m_shelf2GainSlider"
+          virtualName="" explicitFocusOrder="0" pos="728 296 128 48" min="0.0"
+          max="2.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxRight"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <TOGGLEBUTTON name="shelf 1 on off" id="376415eae982007e" memberName="m_shelf1OnOffButton"
+                virtualName="" explicitFocusOrder="0" pos="432 344 32 24" buttonText=""
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TOGGLEBUTTON name="notch 1 on off" id="ef3aa28665758b84" memberName="m_notch1OnOffButton"
+                virtualName="" explicitFocusOrder="0" pos="560 344 32 24" buttonText=""
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TOGGLEBUTTON name="notch 2 on off" id="5421508aa4369d00" memberName="m_notch2OnOffButton"
+                virtualName="" explicitFocusOrder="0" pos="696 344 32 24" buttonText=""
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TOGGLEBUTTON name="shelf 2 on off" id="9559e6130e16bf1f" memberName="m_shelf2OnOffButton"
+                virtualName="" explicitFocusOrder="0" pos="824 344 32 24" buttonText=""
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TOGGLEBUTTON name="EQ on off" id="5f2d1bf2e1f3f13f" memberName="m_EQOnOffButton"
+                virtualName="" explicitFocusOrder="0" pos="792 208 80 24" buttonText="On/Off"
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

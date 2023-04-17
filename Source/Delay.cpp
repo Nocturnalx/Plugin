@@ -43,7 +43,7 @@ Delay::~Delay(){
 
 float Delay::process(float samp){
   if (m_isOn){
-    float wetSamp = ((tapArr[0].process(samp) + tapArr[1].process(samp) + tapArr[2].process(samp))/3);
+    float wetSamp = ((tapArr[0].process(samp) + tapArr[1].process(samp) + tapArr[2].process(samp)));
     
     float out = ((1-m_wetness) * samp) + (m_wetness * wetSamp);
     return out;

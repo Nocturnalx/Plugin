@@ -6,6 +6,10 @@
               pluginCharacteristicsValue="pluginWantsMidiIn">
   <MAINGROUP id="shkZ2M" name="JoeProject">
     <GROUP id="{4A1D2EE2-B4CD-F0BC-17CD-3D2BEFEE41B5}" name="Source">
+      <FILE id="Ott673" name="Biquad.cpp" compile="1" resource="0" file="Source/Biquad.cpp"/>
+      <FILE id="ilMxjD" name="Biquad.h" compile="0" resource="0" file="Source/Biquad.h"/>
+      <FILE id="a5doqv" name="EQ.cpp" compile="1" resource="0" file="Source/EQ.cpp"/>
+      <FILE id="pIeXXJ" name="EQ.h" compile="0" resource="0" file="Source/EQ.h"/>
       <FILE id="D9VVio" name="ADSR.h" compile="0" resource="0" file="Source/ADSR.h"/>
       <FILE id="nlRly3" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
       <FILE id="hk8P7X" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>

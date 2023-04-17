@@ -38,8 +38,7 @@
 */
 class JoeProjectAudioProcessorEditor  : public juce::AudioProcessorEditor,
                                         public juce::Slider::Listener,
-                                        public juce::Button::Listener,
-                                        public juce::ComboBox::Listener
+                                        public juce::Button::Listener
 {
 public:
     //==============================================================================
@@ -49,9 +48,11 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
+    //mix controlls
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> panSliderAttachment;
 
+    //OSCs
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> depthSliderAttachment;
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> attackSliderAttachment;
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> decaySliderAttachment;
@@ -60,15 +61,39 @@ public:
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> releaseSliderAttachment;
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> waveformSliderAttachment;
 
+    //delay
     std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> delayWetnessSliderAttachment;
     std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> delayOnOffButtonAttachment;
+
+    //EQ
+    std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> EQOnOffButtonAttachment;
+
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf1FreqSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf1SSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf1GainSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> shelf1OnOffButtonAttachment;
+
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch1FreqSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch1SSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch1GainSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> notch1OnOffButtonAttachment;
+
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch2FreqSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch2SSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> notch2GainSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> notch2OnOffButtonAttachment;
+
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf2FreqSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf2SSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> shelf2GainSliderAttachment;
+    std::unique_ptr <juce::AudioProcessorValueTreeState::ButtonAttachment> shelf2OnOffButtonAttachment;
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
     void resized() override;
     void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
-    void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
 
 
 
@@ -80,6 +105,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<juce::GroupComponent> juce__groupComponent;
     std::unique_ptr<juce::GroupComponent> effects_group;
     std::unique_ptr<juce::GroupComponent> effects_group2;
     std::unique_ptr<juce::GroupComponent> master_group;
@@ -103,10 +129,26 @@ private:
     std::unique_ptr<juce::Slider> delay_wetSlider;
     std::unique_ptr<juce::Label> wetslider_label;
     std::unique_ptr<juce::ToggleButton> delay_onOffButton;
-    std::unique_ptr<juce::ComboBox> m_presetBox;
     std::unique_ptr<juce::TabbedComponent> harm_tabbedComponent;
     std::unique_ptr<juce::TabbedComponent> tap_tabbedComponent;
     std::unique_ptr<juce::Slider> m_waveformSlider;
+    std::unique_ptr<juce::Slider> m_shelf1FreqSlider;
+    std::unique_ptr<juce::Slider> m_shelf1SSlider;
+    std::unique_ptr<juce::Slider> m_shelf1GainSlider;
+    std::unique_ptr<juce::Slider> m_notch1FreqSlider;
+    std::unique_ptr<juce::Slider> m_notch1QSlider;
+    std::unique_ptr<juce::Slider> m_notch1GainSlider;
+    std::unique_ptr<juce::Slider> m_notch2FreqSlider;
+    std::unique_ptr<juce::Slider> m_notch2QSlider;
+    std::unique_ptr<juce::Slider> m_notch2GainSlider;
+    std::unique_ptr<juce::Slider> m_shelf2FreqSlider;
+    std::unique_ptr<juce::Slider> m_shelf2SSlider;
+    std::unique_ptr<juce::Slider> m_shelf2GainSlider;
+    std::unique_ptr<juce::ToggleButton> m_shelf1OnOffButton;
+    std::unique_ptr<juce::ToggleButton> m_notch1OnOffButton;
+    std::unique_ptr<juce::ToggleButton> m_notch2OnOffButton;
+    std::unique_ptr<juce::ToggleButton> m_shelf2OnOffButton;
+    std::unique_ptr<juce::ToggleButton> m_EQOnOffButton;
 
 
     //==============================================================================
