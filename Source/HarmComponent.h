@@ -50,6 +50,8 @@ public:
     void resized() override;
     void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
 
+
+
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     JoeProjectAudioProcessor &audioProcessor;

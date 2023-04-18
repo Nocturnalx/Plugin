@@ -149,6 +149,8 @@ private:
     std::unique_ptr<juce::ToggleButton> m_notch2OnOffButton;
     std::unique_ptr<juce::ToggleButton> m_shelf2OnOffButton;
     std::unique_ptr<juce::ToggleButton> m_EQOnOffButton;
+    std::unique_ptr<juce::Label> label;
+    std::unique_ptr<juce::Label> m_waveshapeLabel;
 
 
     //==============================================================================

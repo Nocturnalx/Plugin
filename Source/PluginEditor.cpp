@@ -285,7 +285,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     m_waveformSlider->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     m_waveformSlider->addListener (this);
 
-    m_waveformSlider->setBounds (112, 32, 55, 48);
+    m_waveformSlider->setBounds (72, 32, 55, 48);
 
     m_shelf1FreqSlider.reset (new juce::Slider ("shelf 1 Freq slider"));
     addAndMakeVisible (m_shelf1FreqSlider.get());
@@ -430,6 +430,28 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
 
     m_EQOnOffButton->setBounds (792, 208, 80, 24);
 
+    label.reset (new juce::Label ("waveshape label",
+                                  TRANS("Waveshape")));
+    addAndMakeVisible (label.get());
+    label->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    label->setJustificationType (juce::Justification::centredLeft);
+    label->setEditable (false, false, false);
+    label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    label->setBounds (88, 24, 88, 16);
+
+    m_waveshapeLabel.reset (new juce::Label ("waveshape label",
+                                             TRANS("Sine")));
+    addAndMakeVisible (m_waveshapeLabel.get());
+    m_waveshapeLabel->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    m_waveshapeLabel->setJustificationType (juce::Justification::centredLeft);
+    m_waveshapeLabel->setEditable (false, false, false);
+    m_waveshapeLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    m_waveshapeLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    m_waveshapeLabel->setBounds (120, 56, 64, 16);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -571,6 +593,8 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
     m_notch2OnOffButton = nullptr;
     m_shelf2OnOffButton = nullptr;
     m_EQOnOffButton = nullptr;
+    label = nullptr;
+    m_waveshapeLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -661,7 +685,25 @@ void JoeProjectAudioProcessorEditor::sliderValueChanged (juce::Slider* sliderTha
     else if (sliderThatWasMoved == m_waveformSlider.get())
     {
         //[UserSliderCode_m_waveformSlider] -- add your slider handling code here..
-        audioProcessor.updateGlobalParameters(kWaveform, m_waveformSlider->getValue());
+        int val = m_waveformSlider->getValue();
+
+        audioProcessor.updateGlobalParameters(kWaveform, val);
+
+        if(val == kSine){
+            m_waveshapeLabel->setText("Sine", juce::dontSendNotification);
+        }
+
+        if (val == kTriangle){
+            m_waveshapeLabel->setText("Triangle", juce::dontSendNotification);
+        }
+
+        if (val == kSaw){
+            m_waveshapeLabel->setText("Saw", juce::dontSendNotification);
+        }
+
+        if (val == kSquare){
+            m_waveshapeLabel->setText("Square", juce::dontSendNotification);
+        }
         //[/UserSliderCode_m_waveformSlider]
     }
     else if (sliderThatWasMoved == m_shelf1FreqSlider.get())
@@ -937,7 +979,7 @@ BEGIN_JUCER_METADATA
          constructorParams="audioProcessor,kTap3" jucerComponentFile=""/>
   </TABBEDCOMPONENT>
   <SLIDER name="waveform slider" id="cbd7d154315fd17f" memberName="m_waveformSlider"
-          virtualName="" explicitFocusOrder="0" pos="112 32 55 48" min="0.0"
+          virtualName="" explicitFocusOrder="0" pos="72 32 55 48" min="0.0"
           max="3.0" int="1.0" style="RotaryHorizontalVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
@@ -1016,6 +1058,16 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="EQ on off" id="5f2d1bf2e1f3f13f" memberName="m_EQOnOffButton"
                 virtualName="" explicitFocusOrder="0" pos="792 208 80 24" buttonText="On/Off"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <LABEL name="waveshape label" id="5cca5a7befeb81cb" memberName="label"
+         virtualName="" explicitFocusOrder="0" pos="88 24 88 16" edTextCol="ff000000"
+         edBkgCol="0" labelText="Waveshape" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="waveshape label" id="f7a8d0bc2a120f54" memberName="m_waveshapeLabel"
+         virtualName="" explicitFocusOrder="0" pos="120 56 64 16" edTextCol="ff000000"
+         edBkgCol="0" labelText="Sine" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

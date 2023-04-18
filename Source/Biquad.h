@@ -33,20 +33,22 @@ class Biquad {
   protected:
   bool m_isOn;
 
-  double m_sampleRate;
+  float m_sampleRate;
 
-  double m_freq;
-  double m_gain;
+  float m_pi = 3.141592653589793238462643383279502;
 
-  double m_one_over_samplerate;
-  double m_b0;
-  double m_b1;
-  double m_b2;
-  double m_a1;
-  double m_a2;
+  float m_freq;
+  float m_gain;
 
-  double m_z1;
-  double m_z2 ;
+  float m_one_over_samplerate;
+  float m_b0;
+  float m_b1;
+  float m_b2;
+  float m_a1;
+  float m_a2;
+
+  float m_z1;
+  float m_z2 ;
 };
 
 class Notch : public Biquad {
