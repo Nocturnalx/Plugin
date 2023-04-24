@@ -87,6 +87,16 @@ private:
     std::unique_ptr<juce::Slider> harm_releaseSlider;
     std::unique_ptr<juce::Slider> harm_susHeightSlider;
     std::unique_ptr<juce::Slider> harm_offsetSlider;
+    std::unique_ptr<juce::Label> attack_label;
+    std::unique_ptr<juce::Label> decay_label;
+    std::unique_ptr<juce::Label> sustain_label;
+    std::unique_ptr<juce::Label> release_label;
+    std::unique_ptr<juce::Label> sustainHeight_label;
+    std::unique_ptr<juce::Label> time_label;
+    std::unique_ptr<juce::Label> label;
+    std::unique_ptr<juce::Label> harm_waveshapeLabel;
+    std::unique_ptr<juce::Label> offsetlabel;
+    std::unique_ptr<juce::Label> depth_slider;
 
 
     //==============================================================================
