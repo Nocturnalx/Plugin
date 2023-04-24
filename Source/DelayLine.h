@@ -33,20 +33,20 @@ public:
 
 	//delay time should be set in milliseconds
   void setDelay(float delay);
-  void setFeedforward(float gain); // Set feed forward gain
-  void setFeedback(float gain); // Set feedback gain
+  void setFeedforward(float ff); // Set feed forward gain
+  void setFeedback(float fb); // Set feedback gain
 
   float getDelay();
   float getFeedforward(); // Set feed forward gain
   float getFeedback(); // Set feedback gain
-    
+
 private:
   //buffer
 	juce::AudioSampleBuffer m_buffer;
   long m_bufferSize;
 
 	//delay parameters
-	float m_delayInSamples;
+	long m_delayInSamples;
 	float m_feedForward;
 	float m_feedBack;
 

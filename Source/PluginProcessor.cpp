@@ -82,15 +82,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout JoeProjectAudioProcessor::cr
     //delay params
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap1_feedback", "Tap1 Feedback", 0.0f, 1.0f, 0.5f));    
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap1_feedforward", "Tap1 Feedforward", 0.0f, 1.0f, 0.5f));    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("tap1_delay_time", "Tap1 Delay Time", 0.0f, 1.0f, 0.1f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("tap1_delay_time", "Tap1 Delay Time", 0.0f, 2.0f, 0.1f));    
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap2_feedback", "tap2 Feedback", 0.0f, 1.0f, 0.4f));    
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap2_feedforward", "tap2 Feedforward", 0.0f, 1.0f, 0.4f));    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("tap2_delay_time", "tap2 Delay Time", 0.0f, 1.0f, 0.3f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("tap2_delay_time", "tap2 Delay Time", 0.0f, 2.0f, 0.3f));    
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap3_feedback", "tap3 Feedback", 0.0f, 1.0f, 0.3f));    
     layout.add(std::make_unique<juce::AudioParameterFloat>("tap3_feedforward", "tap3 Feedforward", 0.0f, 1.0f, 0.3f));    
-    layout.add(std::make_unique<juce::AudioParameterFloat>("tap3_delay_time", "tap3 Delay Time", 0.0f, 1.0f, 0.5f));    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("tap3_delay_time", "tap3 Delay Time", 0.0f, 2.0f, 0.5f));    
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("delay_wetness", "Delay Wetness", 0.0f, 1.0f, 1.0f));    
     layout.add(std::make_unique<juce::AudioParameterBool>("delay_toggle", "Delay toggle", true));    

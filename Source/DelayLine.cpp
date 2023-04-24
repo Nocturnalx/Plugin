@@ -75,23 +75,23 @@ float DelayLine::process(float samp)
 	return (samp);
 }
 
-void DelayLine::setFeedforward(float gain)
+void DelayLine::setFeedforward(float ff)
 {
-    m_feedForward = gain;
+    m_feedForward = ff;
 }
 
-void DelayLine::setFeedback(float gain)
+void DelayLine::setFeedback(float fb)
 {
-    m_feedBack = gain;
+    m_feedBack = fb;
 }
 
 void DelayLine::setDelay(float delay)
 {
-	m_delayInSamples = delay * m_sampleRate; // Calculate delay in samples
+	m_delayInSamples = (long)(delay * m_sampleRate); // Calculate delay in samples
 
-	
 	// Set the read head to enable the delay
 	m_indexRead = m_indexWrite - m_delayInSamples;
+
 	if (m_indexRead < 0)
 		m_indexRead += m_bufferSize;
 }
