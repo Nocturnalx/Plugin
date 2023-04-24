@@ -207,9 +207,14 @@ Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
     setFS(fs);
 
     //unique
-    int ws = *treeState->getRawParameterValue("master_waveform");
-    m_shape = (waveshapes)ws;
+    setWaveshape(*treeState->getRawParameterValue("master_waveform"));
     m_depthCoef = *treeState->getRawParameterValue("master_depth_coef");
+
+    env->setAttack(*treeState->getRawParameterValue("master_attack"));
+    env->setDecay(*treeState->getRawParameterValue("master_decay"));
+    env->setSustainTime(*treeState->getRawParameterValue("master_sustain"));
+    env->setSustainHeight(*treeState->getRawParameterValue("master_sus_height"));
+    env->setRelease(*treeState->getRawParameterValue("master_release"));
 }
 
 //Harmonic defs
@@ -222,8 +227,6 @@ Harmonic::Harmonic(){
     m_depth = 0.0;
     m_shape = kSine;
 
-    resetPhase();
-
     //unique
     m_depthCoef = 0.0;
 }
@@ -232,14 +235,18 @@ void Harmonic::init(double fs, int harm, juce::AudioProcessorValueTreeState * tr
     m_harmEnum = harm;
 
     setFS(fs);
+
+    setDepthCoef(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kDepthID]));
     setHarmonicOffset(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kOffsetID]));
     setWaveshape(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kWaveformID]));
 
     env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kAttackID]));
-    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kDecayID]));
-    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSustainID]));
-    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSusHeightID]));
-    env->setAttack(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kReleaseID]));
+    env->setDecay(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kDecayID]));
+    env->setSustainTime(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSustainID]));
+    env->setSustainHeight(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kSusHeightID]));
+    env->setRelease(*treeState->getRawParameterValue(harmParamIDs[m_harmEnum][kReleaseID]));
+
+    resetPhase();
 }
 
 //takes offset in semi tones (midi val) and sets midi note + freq val
