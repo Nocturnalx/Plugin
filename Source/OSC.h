@@ -93,10 +93,12 @@ class OSC{
     int noteToBePlayed;
 };
 
+
 class Master : public OSC{
   public:
     Master(double fs, juce::AudioProcessorValueTreeState * treeState);
 };
+
 
 class Harmonic : public OSC{
 

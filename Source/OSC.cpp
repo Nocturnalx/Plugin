@@ -13,6 +13,8 @@
 
 OSC::OSC(){
     env = std::unique_ptr<ADSR>(new ADSR);
+
+    resetPhase();
 }
 
 OSC::~OSC(){}
@@ -48,8 +50,6 @@ float OSC::process()
         m_runOffCoef = (-((float)m_runOffPointer/m_runOffLength))+1.0;
 
         m_runOffPointer++;
-
-        // std::cout << "runoff " << m_runOffCoef << std::endl;
 
         //if coef reaches 0 stop running off reset coef and pointer
         if (m_runOffCoef < 0){
@@ -157,8 +157,6 @@ void OSC::setFS(double fs){
 }
 
 
-//do we need any of these gets??
-
 //gets current waveshape, used for painting
 int OSC::getWaveshape(){
     return m_shape;
@@ -197,16 +195,13 @@ double OSC::renderTriangle(double phase)
 
 //master class
 Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
-    
+
     //defaults
     setMidiNote(69);
     m_depth = 0.0;
 
-    resetPhase();
-
     setFS(fs);
 
-    //unique
     setWaveshape(*treeState->getRawParameterValue("master_waveform"));
     m_depthCoef = *treeState->getRawParameterValue("master_depth_coef");
 
@@ -225,12 +220,10 @@ Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
 
 Harmonic::Harmonic(){
 
-    //defaults these will get overwriten
+    //defaults
     setMidiNote(69);
     m_depth = 0.0;
     m_shape = kSine;
-
-    //unique
     m_depthCoef = 0.0;
 }
 
@@ -252,7 +245,6 @@ void Harmonic::init(double fs, int harm, juce::AudioProcessorValueTreeState * tr
     resetPhase();
 }
 
-//takes offset in semi tones (midi val) and sets midi note + freq val
 void Harmonic::setHarmonicOffset(int offset){
     m_offset = offset;
 
