@@ -34,6 +34,12 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
+    juce__groupComponent2.reset (new juce::GroupComponent ("new group",
+                                                           TRANS("Harmonics")));
+    addAndMakeVisible (juce__groupComponent2.get());
+
+    juce__groupComponent2->setBounds (200, 0, 352, 192);
+
     juce__groupComponent.reset (new juce::GroupComponent ("new group",
                                                           TRANS("EQ")));
     addAndMakeVisible (juce__groupComponent.get());
@@ -236,7 +242,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     delay_wetSlider->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     delay_wetSlider->addListener (this);
 
-    delay_wetSlider->setBounds (256, 320, 48, 48);
+    delay_wetSlider->setBounds (256, 328, 48, 48);
 
     wetslider_label.reset (new juce::Label ("label",
                                             TRANS("Wet")));
@@ -247,7 +253,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     wetslider_label->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     wetslider_label->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    wetslider_label->setBounds (232, 336, 32, 24);
+    wetslider_label->setBounds (232, 344, 32, 24);
 
     delay_onOffButton.reset (new juce::ToggleButton ("on off button"));
     addAndMakeVisible (delay_onOffButton.get());
@@ -266,7 +272,7 @@ JoeProjectAudioProcessorEditor::JoeProjectAudioProcessorEditor (JoeProjectAudioP
     harm_tabbedComponent->addTab (TRANS("harm 4"), juce::Colours::lightgrey, new HarmComponent (audioProcessor, kHarm4), true);
     harm_tabbedComponent->setCurrentTabIndex (0);
 
-    harm_tabbedComponent->setBounds (200, 8, 336, 176);
+    harm_tabbedComponent->setBounds (208, 16, 336, 168);
 
     tap_tabbedComponent.reset (new juce::TabbedComponent (juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (tap_tabbedComponent.get());
@@ -549,6 +555,7 @@ JoeProjectAudioProcessorEditor::~JoeProjectAudioProcessorEditor()
 
     //[/Destructor_pre]
 
+    juce__groupComponent2 = nullptr;
     juce__groupComponent = nullptr;
     effects_group = nullptr;
     effects_group2 = nullptr;
@@ -850,6 +857,8 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="900" initialHeight="385">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GROUPCOMPONENT name="new group" id="fc17a3ab2609b630" memberName="juce__groupComponent2"
+                  virtualName="" explicitFocusOrder="0" pos="200 0 352 192" title="Harmonics"/>
   <GROUPCOMPONENT name="new group" id="c961087fb8b66325" memberName="juce__groupComponent"
                   virtualName="" explicitFocusOrder="0" pos="304 192 568 192" title="EQ"/>
   <GROUPCOMPONENT name="effects group" id="a1843f4e14437c21" memberName="effects_group"
@@ -944,12 +953,12 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="wet slider" id="b349d9cbd1e8ca97" memberName="delay_wetSlider"
-          virtualName="" explicitFocusOrder="0" pos="256 320 48 48" min="0.0"
+          virtualName="" explicitFocusOrder="0" pos="256 328 48 48" min="0.0"
           max="1.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="label" id="d0e04177f0d6ec03" memberName="wetslider_label"
-         virtualName="" explicitFocusOrder="0" pos="232 336 32 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="232 344 32 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Wet" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
@@ -957,7 +966,7 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="224 208 72 24" buttonText="On/Off"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="1"/>
   <TABBEDCOMPONENT name="harm tabs" id="b904e83a971cf3dd" memberName="harm_tabbedComponent"
-                   virtualName="" explicitFocusOrder="0" pos="200 8 336 176" orientation="top"
+                   virtualName="" explicitFocusOrder="0" pos="208 16 336 168" orientation="top"
                    tabBarDepth="30" initialTab="0">
     <TAB name="harm 1" colour="ffd3d3d3" useJucerComp="0" contentClassName="HarmComponent"
          constructorParams="audioProcessor, kHarm1" jucerComponentFile=""/>

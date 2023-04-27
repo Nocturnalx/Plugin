@@ -105,6 +105,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<juce::GroupComponent> juce__groupComponent2;
     std::unique_ptr<juce::GroupComponent> juce__groupComponent;
     std::unique_ptr<juce::GroupComponent> effects_group;
     std::unique_ptr<juce::GroupComponent> effects_group2;

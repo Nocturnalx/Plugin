@@ -41,7 +41,7 @@ HarmComponent::HarmComponent (JoeProjectAudioProcessor &owner, int harm)
     harm_depthSlider->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     harm_depthSlider->addListener (this);
 
-    harm_depthSlider->setBounds (280, 96, 48, 48);
+    harm_depthSlider->setBounds (288, 96, 48, 48);
 
     harm_waveformSlider.reset (new juce::Slider ("waveform"));
     addAndMakeVisible (harm_waveformSlider.get());
@@ -214,7 +214,7 @@ HarmComponent::HarmComponent (JoeProjectAudioProcessor &owner, int harm)
     depth_slider->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     depth_slider->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    depth_slider->setBounds (240, 112, 47, 16);
+    depth_slider->setBounds (248, 112, 47, 16);
 
 
     //[UserPreSize]
@@ -397,7 +397,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="ff505050"/>
   <SLIDER name="depth" id="79a572d2b8ea4f70" memberName="harm_depthSlider"
-          virtualName="" explicitFocusOrder="0" pos="280 96 48 48" min="0.0"
+          virtualName="" explicitFocusOrder="0" pos="288 96 48 48" min="0.0"
           max="1.0" int="0.0" style="RotaryHorizontalVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
@@ -482,7 +482,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <LABEL name="depth sliider" id="799e645c3dc8b306" memberName="depth_slider"
-         virtualName="" explicitFocusOrder="0" pos="240 112 47 16" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="248 112 47 16" edTextCol="ff000000"
          edBkgCol="0" labelText="Depth" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
