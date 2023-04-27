@@ -57,7 +57,8 @@ class OSC{
     void reset(bool noteOn);
     void resetPhase();
 
-    ADSR * env;
+    // ADSR * env;
+    std::unique_ptr<ADSR> env;
     
   protected:
     

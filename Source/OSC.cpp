@@ -11,12 +11,11 @@
 #include "PluginProcessor.h"
 #define PI 3.141592654
 
-OSC::OSC(){}
-
-OSC::~OSC()
-{
-    delete env;
+OSC::OSC(){
+    env = std::unique_ptr<ADSR>(new ADSR);
 }
+
+OSC::~OSC(){}
 
 float OSC::process()
 {
@@ -194,11 +193,12 @@ double OSC::renderTriangle(double phase)
 }
 
 
-//master defs
-Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
-    //defaults
-    env = new ADSR;
 
+
+//master class
+Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
+    
+    //defaults
     setMidiNote(69);
     m_depth = 0.0;
 
@@ -217,11 +217,14 @@ Master::Master(double fs, juce::AudioProcessorValueTreeState * treeState){
     env->setRelease(*treeState->getRawParameterValue("master_release"));
 }
 
-//Harmonic defs
+
+
+
+
+//Harmonic class
 
 Harmonic::Harmonic(){
-    env = new ADSR;
-    
+
     //defaults these will get overwriten
     setMidiNote(69);
     m_depth = 0.0;
